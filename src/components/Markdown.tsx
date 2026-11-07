@@ -19,7 +19,7 @@ const marked = new Marked({
   renderer: {
     code({ text, lang }) {
       const language = normalizeLang(lang);
-      return `<pre class="codeblock-inline"><code class="hljs language-${language}">${highlight(text, lang)}</code></pre>`;
+      return `<pre class="codeblock-inline" tabindex="0"><code class="hljs language-${language}">${highlight(text, lang)}</code></pre>`;
     },
     link({ href, title, tokens }) {
       const text = this.parser.parseInline(tokens);
@@ -35,7 +35,7 @@ const marked = new Marked({
       const rows = token.rows
         .map((row) => `<tr>${row.map((cell) => `<td${cell.align ? ` style="text-align:${cell.align}"` : ''}>${this.parser.parseInline(cell.tokens)}</td>`).join('')}</tr>`)
         .join('');
-      return `<div class="table-wrap"><table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table></div>`;
+      return `<div class="table-wrap" tabindex="0" role="region" aria-label="Table"><table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table></div>`;
     },
   },
 });
@@ -126,13 +126,13 @@ function renderTokens(tokens: Token[], links: Tokens.Generic['links'], renderQui
         const inner = quote.text.split('\n').slice(1).join('\n');
         const innerTokens = marked.lexer(inner);
         out.push(
-          <aside key={`callout-${out.length}`} className={`callout callout-${kind.toLowerCase()}`}>
+          <div key={`callout-${out.length}`} role="note" className={`callout callout-${kind.toLowerCase()}`}>
             <div className="callout-title">
               <Icon name={meta.icon} size={16} />
               <span>{title ? <span dangerouslySetInnerHTML={{ __html: marked.parseInline(title) as string }} /> : meta.label}</span>
             </div>
             <div className="callout-body">{renderTokens(innerTokens, innerTokens.links, renderQuiz)}</div>
-          </aside>,
+          </div>,
         );
         continue;
       }

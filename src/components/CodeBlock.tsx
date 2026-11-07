@@ -19,7 +19,7 @@ export function CodeBlock({ code, lang }: { code: string; lang?: string }) {
       <button type="button" className="codeblock-copy" onClick={copy} aria-label="Copy code">
         <Icon name={copied ? 'check' : 'copy'} size={14} />
       </button>
-      <pre>
+      <pre tabIndex={0}>
         <code className={`hljs language-${language}`} dangerouslySetInnerHTML={{ __html: highlight(code.replace(/\n$/, ''), lang) }} />
       </pre>
     </div>

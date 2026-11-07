@@ -268,7 +268,7 @@ export function ExerciseWorkbench({ day, exercise, mockMinutes, onPassed }: Prop
               </button>
             ))}
         </div>
-        <div className="wb-left-panel" id="wb-left-panel" role="tabpanel" aria-labelledby={`tab-${leftTab}`}>
+        <div className="wb-left-panel" id="wb-left-panel" role="tabpanel" tabIndex={0} aria-labelledby={`tab-${leftTab}`}>
           {leftTab === 'prompt' && (
             <>
               <Markdown source={exercise.prompt} />

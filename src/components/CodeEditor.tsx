@@ -1,4 +1,4 @@
-import CodeMirror from '@uiw/react-codemirror';
+import CodeMirror, { EditorView } from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import { useMemo } from 'react';
 import { useTheme } from '../lib/theme';
@@ -17,7 +17,14 @@ interface Props {
 
 export function CodeEditor({ value, onChange, language = 'ts', readOnly, minHeight, maxHeight, height, ariaLabel = 'Code editor', onRun }: Props) {
   const theme = useTheme();
-  const extensions = useMemo(() => [javascript({ typescript: true, jsx: language === 'tsx' })], [language]);
+  const extensions = useMemo(
+    () => [
+      javascript({ typescript: true, jsx: language === 'tsx' }),
+      // Give the editable region an accessible name (the wrapper's aria-label doesn't reach it).
+      EditorView.contentAttributes.of({ 'aria-label': ariaLabel, ...(readOnly ? { 'aria-readonly': 'true' } : {}) }),
+    ],
+    [language, ariaLabel, readOnly],
+  );
   return (
     <div
       className="code-editor"
@@ -34,11 +41,10 @@ export function CodeEditor({ value, onChange, language = 'ts', readOnly, minHeig
         extensions={extensions}
         theme={theme}
         readOnly={readOnly}
-        editable={!readOnly}
+        editable
         height={height}
         minHeight={minHeight}
         maxHeight={maxHeight}
-        aria-label={ariaLabel}
         basicSetup={{ foldGutter: false, highlightActiveLine: !readOnly, highlightActiveLineGutter: !readOnly, autocompletion: true, tabSize: 2 }}
       />
     </div>
