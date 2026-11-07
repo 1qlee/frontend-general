@@ -19,7 +19,7 @@
   --accent-text: #4747c2;
   --accent-soft: #ededfc;
   --on-accent: #ffffff;
-  --success: #15803d;
+  --success: #13733a;
   --success-soft: #e7f6ec;
   --warning: #b45309;
   --warning-soft: #fdf3e2;
@@ -34,22 +34,22 @@
   --font: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Cascadia Code', Menlo, Consolas, monospace;
 
-  --tone-lesson: #2f6fdb;
-  --tone-quiz: #c27803;
-  --tone-exercise: #15803d;
-  --tone-agentic: #7c3aed;
+  --tone-lesson: #2559c4;
+  --tone-quiz: #8f5a00;
+  --tone-exercise: #13733a;
+  --tone-agentic: #6d28d9;
   --tone-build: #0e7490;
-  --tone-drill: #c2266d;
-  --tone-review: #64748b;
+  --tone-drill: #a81d5c;
+  --tone-review: #5b6676;
 
   --hl-keyword: #8b2fc9;
   --hl-string: #1f7a3a;
   --hl-number: #b45309;
-  --hl-comment: #8a8a99;
+  --hl-comment: #6c6c7b;
   --hl-title: #2557c4;
   --hl-type: #0e7490;
   --hl-attr: #9a3412;
-  --hl-meta: #64748b;
+  --hl-meta: #5b6676;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -88,7 +88,7 @@
     --hl-keyword: #c792ea;
     --hl-string: #a5d6a7;
     --hl-number: #f7a35c;
-    --hl-comment: #6b6b7c;
+    --hl-comment: #8a8a9b;
     --hl-title: #82aaff;
     --hl-type: #5fd3e6;
     --hl-attr: #ffb48a;
@@ -131,7 +131,7 @@
   --hl-keyword: #c792ea;
   --hl-string: #a5d6a7;
   --hl-number: #f7a35c;
-  --hl-comment: #6b6b7c;
+  --hl-comment: #8a8a9b;
   --hl-title: #82aaff;
   --hl-type: #5fd3e6;
   --hl-attr: #ffb48a;

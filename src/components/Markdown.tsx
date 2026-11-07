@@ -35,7 +35,7 @@ const marked = new Marked({
       const rows = token.rows
         .map((row) => `<tr>${row.map((cell) => `<td${cell.align ? ` style="text-align:${cell.align}"` : ''}>${this.parser.parseInline(cell.tokens)}</td>`).join('')}</tr>`)
         .join('');
-      return `<div class="table-wrap" tabindex="0" role="region" aria-label="Table"><table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table></div>`;
+      return `<div class="table-wrap" tabindex="0"><table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table></div>`;
     },
   },
 });
