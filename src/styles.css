@@ -244,7 +244,8 @@ textarea {
 .skip-link {
   position: absolute;
   left: 12px;
-  top: -40px;
+  top: 12px;
+  transform: translateY(-200%);
   z-index: 100;
   background: var(--accent);
   color: var(--on-accent);
@@ -252,7 +253,7 @@ textarea {
   border-radius: var(--radius-sm);
 }
 .skip-link:focus {
-  top: 12px;
+  transform: none;
 }
 @media (prefers-reduced-motion: reduce) {
   * {

@@ -15,6 +15,8 @@ const theme = params.get('theme');
 if (theme === 'dark' || theme === 'light') document.documentElement.style.colorScheme = theme;
 
 const builtins = createDomBuiltins();
+// Tests run inside act(); the live preview is a normal app, so don't expect act() there.
+if (mode === 'preview') (globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = false;
 const parentWindow = window.parent;
 const post = (message: unknown) => parentWindow.postMessage(message, '*');
 const forwardLog = (entry: LogEntry) => post({ type: 'log', entry });

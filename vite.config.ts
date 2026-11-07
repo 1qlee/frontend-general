@@ -17,10 +17,8 @@ export default defineConfig({
     target: 'es2022',
     chunkSizeWarningLimit: 6000,
     rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html'),
-        sandbox: resolve(__dirname, 'sandbox.html'),
-      },
+      // sandbox.html is built separately (vite.sandbox.config.ts) with React's development build.
+      input: { main: resolve(__dirname, 'index.html') },
     },
   },
   test: {
