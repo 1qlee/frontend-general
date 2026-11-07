@@ -20,6 +20,7 @@ interface Mode {
 const MODES: Mode[] = [
   { id: 'rapid-fire', title: 'Rapid-fire concepts', icon: 'zap', minutes: '15–20 min', description: '8 random concept questions from the days you have unlocked. Answer out loud, reveal, grade yourself.' },
   { id: 'coding', title: 'Coding round', icon: 'code', minutes: '20–35 min', description: 'A random TypeScript or type-level problem under a countdown. Hints and solution unlock when time is up.' },
+  { id: 'algorithms', title: 'Algorithms round', icon: 'target', minutes: '25–40 min', description: 'A LeetCode-style data structures & algorithms problem under a countdown. Narrate the framework: clarify, brute force, optimize, test.' },
   { id: 'ui-build', title: 'UI build round', icon: 'layers', minutes: '30–45 min', description: 'A React component with tests and a live preview, timed like a machine-coding round.' },
   { id: 'system-design', title: 'System design round', icon: 'compass', minutes: '45 min', description: 'A frontend system design prompt with a RADIO scratchpad, a reference outline and a rubric.' },
   { id: 'behavioral', title: 'Behavioural', icon: 'mic', minutes: '10–15 min', description: 'STAR-structured stories for the questions every loop includes.' },
@@ -55,7 +56,7 @@ function MockHub() {
       <header className="page-header">
         <p className="eyebrow">Simulation</p>
         <h1>Mock interview</h1>
-        <p className="lede">Practice the formats, not just the facts. Start a timer, talk out loud, and grade yourself honestly. Day 15 strings these together into a full loop.</p>
+        <p className="lede">Practice the formats, not just the facts. Start a timer, talk out loud, and grade yourself honestly. The final day strings these together into a full loop.</p>
       </header>
       <div className="mode-grid">
         {MODES.map((m) => (
@@ -195,7 +196,7 @@ function ExerciseRound({ filter, title, minutesFor }: { filter: (e: ExerciseRef)
         onPassed={() =>
           addMockSession({
             id: `${Date.now()}`,
-            mode: title.startsWith('UI') ? 'ui-build' : 'coding',
+            mode: title.startsWith('UI') ? 'ui-build' : title.startsWith('Algorithms') ? 'algorithms' : 'coding',
             startedAt,
             durationSec: Math.round((Date.now() - startedAt) / 1000),
             items: [{ ref: key(pick.day.number, pick.exercise.id), passed: true }],
@@ -377,6 +378,8 @@ export function MockInterview({ mode }: { mode?: string }) {
       );
     case 'coding':
       return <ExerciseRound title="Coding round" filter={(e) => e.exercise.runtime !== 'dom' && e.exercise.difficulty !== 'warm-up'} minutesFor={(e) => Math.max(15, e.exercise.estMinutes + 5)} />;
+    case 'algorithms':
+      return <ExerciseRound title="Algorithms round" filter={(e) => e.exercise.tags.includes('dsa') && e.exercise.difficulty !== 'warm-up'} minutesFor={(e) => Math.max(20, e.exercise.estMinutes + 10)} />;
     case 'ui-build':
       return <ExerciseRound title="UI build round" filter={(e) => e.exercise.runtime === 'dom' && e.exercise.mode !== 'write-tests'} minutesFor={(e) => Math.max(25, e.exercise.estMinutes + 10)} />;
     case 'system-design':

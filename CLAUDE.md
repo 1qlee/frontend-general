@@ -1,6 +1,6 @@
 # Frontend Interview Gym
 
-Interactive 15-day course app: Vite 6 + React 19 + TypeScript (strict). Content is typed TS modules + markdown;
+Interactive 17-day course app: Vite 6 + React 19 + TypeScript (strict). Content is typed TS modules + markdown;
 exercises run in the browser against a Vitest-compatible harness.
 
 ## Commands

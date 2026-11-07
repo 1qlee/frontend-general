@@ -42,11 +42,11 @@ a reference solution fails its tests / has type errors, or a starter already pas
 | `quiz` | 8–12 questions; "what does this print?" and concept checks with thorough explanations | 15–20 |
 | `exercise` | 3–6 hands-on exercises with automated tests | 50–70 |
 | `lab` (`build`) | Bigger hands-on build in the learner's own practice repo (`fe-gym`) | 30–60 |
-| `lab` (`agentic`) | Claude Code practice — injected from `labs/dayNN` (40 min on days 2–13) | 40 |
+| `lab` (`agentic`) | Claude Code practice — injected from `labs/dayNN` (35 min) | 35 |
 | `drill` | Speak-aloud interview questions with model answers (uses `interviewQuestions`) | 15–20 |
 
-Days 2–13 author **≈ 200 minutes** in `days/dayNN/index.ts`; the 40-minute agentic lab is
-injected automatically before the `drill` block. Day 1, 14 and 15 author the full 240.
+Days 2–13, 15 and 16 author **≈ 200–220 minutes** in `days/dayNN/index.ts`; the 35-minute agentic lab is
+injected automatically before the `drill` block. Days 1, 14 and 17 author the full 240.
 
 ## Markdown conventions
 

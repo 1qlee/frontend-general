@@ -4,6 +4,7 @@ import type { IconName } from '../components/Icon';
 export const SKILL_LABELS: Record<SkillArea, string> = {
   javascript: 'JavaScript core',
   async: 'Async & event loop',
+  algorithms: 'Data structures & algorithms',
   typescript: 'TypeScript',
   react: 'React fundamentals',
   'react-advanced': 'Advanced React',
@@ -50,5 +51,5 @@ export const RUNTIME_LABELS: Record<ExerciseRuntime, string> = {
 };
 
 export function weekOf(day: number): number {
-  return day <= 7 ? 1 : 2;
+  return Math.ceil(day / 7);
 }

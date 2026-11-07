@@ -2,7 +2,7 @@
   "name": "frontend-interview-gym",
   "private": true,
   "version": "1.0.0",
-  "description": "An interactive 2-week course to sharpen frontend fundamentals, system design and agentic development with Claude Code for interviews.",
+  "description": "An interactive course to sharpen React, TypeScript, frontend fundamentals, DS&A, system design and agentic development with Claude Code for interviews.",
   "type": "module",
   "scripts": {
     "dev": "vite",

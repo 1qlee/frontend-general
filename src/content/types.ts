@@ -18,6 +18,7 @@ export type Markdown = string;
 export type SkillArea =
   | 'javascript'
   | 'async'
+  | 'algorithms'
   | 'typescript'
   | 'react'
   | 'react-advanced'

@@ -20,10 +20,10 @@ export function StartHere() {
     <div className="page narrow">
       <header className="page-header">
         <p className="eyebrow">Start here</p>
-        <h1>Two weeks to interview-ready</h1>
+        <h1>Your path to interview-ready</h1>
         <p className="lede">
           A hands-on course for experienced frontend developers who know more than their interviews show. It's React and TypeScript first, covers the general frontend
-          topics interviewers always probe, and trains you to use Claude Code like a senior engineer.
+          topics interviewers always probe, gives you a framework for algorithm rounds, and trains you to use Claude Code like a senior engineer.
         </p>
       </header>
 
@@ -53,7 +53,7 @@ export function StartHere() {
           <div>
             <Icon name="cards" />
             <h3>Remember it</h3>
-            <p>Spaced-repetition flashcards warm up each day so day-1 material is still sharp on day 15.</p>
+            <p>Spaced-repetition flashcards warm up each day so day-1 material is still sharp on the last day.</p>
           </div>
           <div>
             <Icon name="target" />

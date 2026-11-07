@@ -3,7 +3,7 @@ import type { SkillArea } from '../content/types';
 import { Icon } from '../components/Icon';
 import { ProgressBar, ProgressRing } from '../components/ProgressRing';
 import { Link } from '../lib/router';
-import { ALL_SKILLS, SKILL_LABELS, blockMeta } from '../lib/meta';
+import { ALL_SKILLS, SKILL_LABELS, blockMeta, weekOf } from '../lib/meta';
 import { formatDuration } from '../lib/studyTimer';
 import { plain } from '../lib/text';
 import { currentDayNumber, dayCompletion, furthestDayTouched, isBlockComplete, isCardDue, key, toDateKey, useProgress } from '../store/progress';
@@ -66,7 +66,7 @@ export function Dashboard() {
       <section className="hero card">
         <div className="hero-text">
           <p className="eyebrow">
-            Day {current.number} of {days.length} · Week {current.number <= 7 ? 1 : 2}
+            Day {current.number} of {days.length} · Week {weekOf(current.number)}
           </p>
           <h1>{current.title}</h1>
           <p className="lede">{current.tagline}</p>
@@ -136,7 +136,7 @@ export function Dashboard() {
 
       <section className="card">
         <div className="section-head">
-          <h2>Your two weeks</h2>
+          <h2>Your course</h2>
           <span className="muted">≈4 hours per day</span>
         </div>
         <ol className="day-grid">

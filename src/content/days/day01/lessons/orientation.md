@@ -33,7 +33,7 @@ This course is built around those three gaps. Every day mixes **reading** (menta
 
 ## What "proficient" looks like at the end
 
-By day 15 you should be able to, without notes:
+By the last day you should be able to, without notes:
 
 - Explain the event loop, closures, `this`, and prototypes precisely, and predict tricky output.
 - Implement debounce, throttle, `Promise.all`, a concurrency-limited task pool, deep clone/equal, an event emitter, and memoization in TypeScript in under 15 minutes each.
@@ -41,6 +41,7 @@ By day 15 you should be able to, without notes:
 - Explain React's rendering model, reconciliation, effects, and React 19 features; build common UI components (tabs, modal, autocomplete, data table) accessibly in 45 minutes.
 - Talk through Core Web Vitals, caching, security (XSS/CSRF/CSP/CORS) and accessibility with concrete examples.
 - Drive a frontend system design interview using a structured framework.
+- Recognise the common algorithm patterns (hashing, two pointers, sliding window, BFS/DFS, binary search, simple DP) and talk through an unseen LeetCode-style problem methodically.
 - Use Claude Code like a senior engineer: planning, context management, custom commands, subagents, hooks, MCP, CI — and talk credibly about AI-assisted development in interviews.
 
 ## Set up today (part of the lab later)

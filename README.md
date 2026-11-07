@@ -1,6 +1,6 @@
 # Frontend Interview Gym
 
-An interactive, two-week course (15 days × ~4 hours) for experienced frontend developers who know more
+An interactive course (17 days × ~4 hours — two weeks of core material plus a data structures & algorithms module) for experienced frontend developers who know more
 than their interviews show. **React + TypeScript first**, with the general frontend topics interviewers
 always probe, frontend system design, and a full track on **agentic development with Claude Code**.
 
@@ -14,7 +14,7 @@ Everything runs in the browser — no backend:
   - **Type challenges** checked by the real TypeScript compiler (strict) in a worker;
   - **"Write the tests"** exercises: your tests must pass on a correct implementation and catch every planted bug.
 - **Quizzes** (output prediction with "run it" verification), **speak-aloud drills** with model answers and self-grading,
-  **spaced-repetition flashcards**, a **practice bank**, **mock interview** modes (rapid-fire, coding, UI build,
+  **spaced-repetition flashcards**, a **practice bank**, **mock interview** modes (rapid-fire, coding, algorithms, UI build,
   system design, behavioural, AI-assisted development) and an **interview playbook**.
 - **Claude Code labs** every day in your own practice repo (`fe-gym`): CLAUDE.md, plan mode, slash commands,
   hooks, subagents, skills, MCP, headless mode, CI — plus a dedicated deep-dive day.
@@ -39,7 +39,9 @@ Everything runs in the browser — no backend:
 | 12 | Frontend system design II — chat, carousel, e-commerce, design systems, web security |
 | 13 | Testing & tooling — RTL, Playwright, MSW, Vite & bundlers, monorepos, CI |
 | 14 | Agentic development with Claude Code — professional workflows deep dive |
-| 15 | Interview simulation — full mock loop, behavioural story bank, maintenance plan |
+| 15 | Data structures & algorithms I — problem-solving framework, Big-O, hashing, two pointers, sliding window, stacks, binary search |
+| 16 | Data structures & algorithms II — recursion, trees, graphs, heaps, backtracking, intro DP |
+| 17 | Interview simulation — full mock loop, behavioural story bank, maintenance plan |
 
 ## Run it
 
