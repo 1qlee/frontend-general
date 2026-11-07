@@ -81,7 +81,7 @@ When you review the spec, the core of each scan should look like this:
 
 ```ts
 const results = await new AxeBuilder({ page })
-  .include('[role="dialog"]')
+  .include('[role="dialog"]') // or 'dialog' if you used the native element
   .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
   .analyze();
 expect(results.violations).toEqual([]);
