@@ -8,6 +8,10 @@ import { resolve } from 'node:path';
 export default defineConfig({
   base: './',
   plugins: [react()],
+  resolve: {
+    // Raw access to declaration files in node_modules (bundled for the in-browser type checker).
+    alias: { '~nm': resolve(__dirname, 'node_modules') },
+  },
   worker: { format: 'es' },
   build: {
     target: 'es2022',
