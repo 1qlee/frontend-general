@@ -1,36 +1,30 @@
 import type { Day } from '../../types';
 
-import framework from './lessons/framework.md?raw';
-import arraysStringsHashing from './lessons/arrays-strings-hashing.md?raw';
-import stacksQueuesListsSearch from './lessons/stacks-queues-lists-search.md?raw';
+import recursionTrees from './lessons/recursion-trees.md?raw';
+import graphsHeaps from './lessons/graphs-heaps.md?raw';
+import backtrackingDp from './lessons/backtracking-dp.md?raw';
 
-import {
-  dailyTemperatures,
-  groupAnagrams,
-  longestUniqueSubstring,
-  reverseLinkedList,
-  searchInsert,
-  subarraySumK,
-  twoSum,
-} from './exercises';
-import { arraysChecks, frameworkChecks, quizQuestions, structuresChecks } from './quiz';
+import { coinChange, levelOrder, maxDepth, numIslands, shortestPath, subsets, topKFrequent } from './exercises';
+import { dpChecks, graphChecks, quizQuestions, treeChecks } from './quiz';
 import { flashcards, interviewQuestions } from './interview';
 
 const day: Day = {
   number: 16,
-  title: 'Data Structures & Algorithms I: The Framework & Linear Structures',
-  tagline: 'A repeatable method for any algorithm problem, Big-O you can defend, and the patterns behind most array, string, stack and search questions.',
+  title: 'DS&A II: Recursion, Trees, Graphs & a First Look at DP',
+  tagline: 'Trust the recursion, pick BFS or DFS on purpose, and recognise when a problem is DP.',
   summary:
-    'Most frontend loops include at least one LeetCode-style round, and strong engineers fail it through **process**, not knowledge: coding too early, going silent, missing edge cases, or not being able to justify the complexity. Today you learn an eight-step method with exact phrases to say, how to read constraints to know which complexity is expected, and the core linear-structure patterns: hashing, prefix sums, two pointers, sliding windows, stacks (including monotonic stacks), queues, linked lists and binary search. Then you solve seven classic problems in TypeScript, out loud.',
+    'DS&A I gave you the problem-solving framework and the linear patterns. Today covers the recursive half of a typical DS&A round: **recursion and trees** (DFS orders, BFS by level, BST bounds, the JS call-stack limit), **graphs and heaps** (adjacency lists, BFS shortest paths, components, cycles, grids, top-k), and **backtracking and an introduction to dynamic programming**. It ends with a cue-to-pattern map, so that in an interview you can name the pattern within the first few minutes and explain why it fits. All of it is in TypeScript, and much of it maps onto trees you already work with: the DOM, JSON and component trees.',
   objectives: [
-    'Run the eight-step method (clarify → examples → brute force → bottleneck & pattern → plan → implement → trace → complexity) out loud, with the phrases interviewers listen for',
-    'Analyse time and space for loops, hidden loops, recursion and amortised operations, and map input constraints to an expected complexity',
-    'State the costs of common JavaScript operations (Map/Set, push/shift, includes, sort, string building) and avoid JS-specific traps',
-    'Recognise hashing, prefix-sum, two-pointer, sliding-window and sort-first problems from their cues and write each template from memory',
-    'Use stacks (bracket matching, monotonic stacks), index-pointer queues, linked-list pointer techniques and a single reliable binary-search template, including binary search on the answer space',
-    'Solve Two Sum, Group Anagrams, Longest Unique Substring, Subarray Sum = K, Reverse Linked List, Search Insert and Daily Temperatures with optimal complexity',
+    'Write recursive tree functions with a clear base case, and explain their O(h) stack cost and JS stack-overflow limits',
+    'Choose between pre-, in- and post-order DFS and level-order BFS, and write each recursively and iteratively',
+    'Validate a BST with bounds and solve height, path-sum and lowest-common-ancestor problems',
+    'Build an adjacency list, use BFS for unweighted shortest paths, and use DFS for components and cycle detection (directed and undirected)',
+    'Treat grids as implicit graphs and implement a MinHeap for top-k and k-way merge',
+    'Apply the backtracking template (choose → explore → unchoose) with pruning',
+    'Solve DP problems with the state → transition → base case recipe, top-down and bottom-up',
+    'Map problem cues to patterns using a single recognition table',
   ],
-  skills: ['algorithms', 'javascript', 'interviewing'],
+  skills: ['algorithms', 'interviewing'],
   blocks: [
     {
       kind: 'review',
@@ -38,58 +32,50 @@ const day: Day = {
       title: 'Warm-up: spaced repetition',
       minutes: 15,
       intro:
-        'Flashcards from earlier days. Pay attention to the JS core cards on closures and `memoize` (memoization comes back as a time/space trade-off today) and to the performance day\'s LRU cache (a hash map plus a linked list).',
+        'Flashcards from earlier days. Pay extra attention to DS&A I (the framework, Big-O, hashing, stacks and queues) and to `memoize` from the JS-core day. Today\'s BFS needs a queue and today\'s DP *is* memoization.',
     },
     {
       kind: 'lesson',
-      id: 'algorithm-framework',
-      title: 'A framework for any algorithm problem',
-      minutes: 35,
-      body: framework,
-      checks: frameworkChecks,
-    },
-    {
-      kind: 'lesson',
-      id: 'arrays-strings-hashing',
-      title: 'Arrays, strings & hashing: the five core patterns',
+      id: 'recursion-trees',
+      title: 'Recursion & trees',
       minutes: 40,
-      body: arraysStringsHashing,
-      checks: arraysChecks,
+      body: recursionTrees,
+      checks: treeChecks,
     },
     {
       kind: 'lesson',
-      id: 'stacks-queues-lists-search',
-      title: 'Stacks, queues, linked lists & binary search',
+      id: 'graphs-heaps',
+      title: 'Graphs & heaps',
       minutes: 35,
-      body: stacksQueuesListsSearch,
-      checks: structuresChecks,
+      body: graphsHeaps,
+      checks: graphChecks,
+    },
+    {
+      kind: 'lesson',
+      id: 'backtracking-dp',
+      title: 'Backtracking & intro dynamic programming',
+      minutes: 35,
+      body: backtrackingDp,
+      checks: dpChecks,
     },
     {
       kind: 'quiz',
-      id: 'complexity-patterns-quiz',
-      title: 'Quiz: complexity analysis & pattern recognition',
+      id: 'dsa2-quiz',
+      title: 'Quiz: traversals, complexity & recurrences',
       minutes: 15,
       intro:
-        'For each question, say the complexity or pattern out loud *before* looking at the choices. That\'s the skill the interview tests. Then read the whole explanation, including why the tempting answers are wrong.',
+        'Commit to an answer before you reveal it. For complexity questions, say the number *and* why (count the states, the branching, the stack depth). Run the snippets. Several of the wrong options are bugs that interviewers see all the time.',
       questions: quizQuestions,
     },
     {
       kind: 'exercise',
-      id: 'dsa-linear-exercises',
-      title: 'Seven classics, solved out loud',
+      id: 'dsa2-exercises',
+      title: 'Trees, graphs, heaps, backtracking & DP',
       minutes: 65,
-      intro: `Interview conditions: no AI, a timer per problem (about 8–12 minutes), and **talk out loud** through the method from the first lesson. Before you write any code, put these comments at the top of the editor and fill them in:
+      intro: `Interview conditions, using the framework from DS&A I: **clarify → examples → brute force → bottleneck → pattern → code → test → complexity**. Say the pattern out loud before you type ("this is BFS because every edge costs the same"). Time-box each problem to about 10 minutes. If you are stuck after 5, take one hint, not three.
 
-\`\`\`ts
-// Clarify:      inputs, outputs, constraints, what to return when there's no answer
-// Examples:     one normal case + edge cases (empty, single, duplicates, negatives)
-// Brute force:  … → O(?) time, O(?) space
-// Bottleneck:   what work is repeated? → pattern:
-// Plan:         3–5 steps
-\`\`\`
-
-Then code, trace one example by hand, and state the complexity *before* you run the tests. Some tests check performance, so a correct but quadratic solution will fail them on purpose. Work in order. Daily Temperatures is the stretch. Read every explanation afterwards: the follow-ups are what interviewers ask next.`,
-      exercises: [twoSum, groupAnagrams, longestUniqueSubstring, subarraySumK, reverseLinkedList, searchInsert, dailyTemperatures],
+Order: the warm-up tree (\`maxDepth\`), then level order, islands, shortest path, top-k and subsets. Leave **coin change** (stretch) for last. The tree starters already include the \`TreeNode\` class and the \`fromLevelOrder\`/\`toLevelOrder\` helpers, so you only write the algorithm. After passing each one, read the explanation: it goes brute force → bottleneck → pattern → walk-through → complexity → edge cases → follow-ups, which is the order you should talk in.`,
+      exercises: [maxDepth, levelOrder, numIslands, shortestPath, topKFrequent, subsets, coinChange],
     },
     {
       kind: 'drill',
@@ -97,7 +83,7 @@ Then code, trace one example by hand, and state the complexity *before* you run 
       title: 'Speak-aloud drill',
       minutes: 15,
       intro:
-        'Answer each question out loud in 60–120 seconds before revealing the model answer. Lead with a one-sentence answer, give a concrete example (a problem you solved today), and end with a trade-off.',
+        'Answer each question out loud in 60–120 seconds before you reveal the model answer: one sentence first, then the mechanism, then a complexity or trade-off and an example. Where you can, connect the answer to frontend work (the DOM, bundlers, schedulers). Interviewers remember that.',
     },
   ],
   flashcards,

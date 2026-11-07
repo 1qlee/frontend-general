@@ -1,156 +1,114 @@
 ## Goal
 
-Turn Claude Code into a **Socratic DS&A coach** for your fe-gym practice. You'll build two project slash commands: `/hint`, which gives graduated hints and never full solutions, and `/complexity`, which makes *you* justify Big-O before it reviews your analysis. Then you'll use a prompt pattern where **Claude writes tricky edge-case tests and you write the solutions**.
+Build a **stress-testing harness** for your DS&A solutions in fe-gym. You write the optimised solution yourself. Claude writes three supporting pieces: (a) a slow but obviously correct **brute-force reference**, (b) a **seeded random input generator**, and (c) a Vitest **differential test** that runs both over hundreds of random cases and reports the *smallest* input where they disagree. Then you plant a bug, debug it from a minimal counterexample, and see how property-based testing (fast-check) does the same thing at industrial strength.
 
 ## Why it matters
 
-The fastest way to stop improving at algorithms is to read the answer the moment you get stuck. An agent that hands over solutions on request makes that even easier. A good human coach does the opposite: they ask a question, give the smallest useful hint, and make you explain your reasoning. Custom commands let you encode that behaviour once and reuse it every time, so the tool supports your learning instead of replacing it. The same skill applies at work: designing prompts and guardrails that keep an agent inside a role you chose deliberately.
+Hand-written examples only test the cases you already thought of. The bugs that cost you an interview (or a production incident) are the ones you didn't think of: an empty grid, a coin larger than the amount, a duplicate edge. Competitive programmers catch these with stress tests: a brute force that is too slow to submit but easy to trust, compared against the fast solution on random small inputs. It's also a good fit for an agent. The brute force and the generator are boilerplate that's easy to check, while the interesting code stays yours. The tests give Claude and you a shared way to check the work.
 
-## 1. Set up a practice problem (5 min)
+## 1. Set the ground rules (3 min)
 
-In fe-gym, create `src/dsa/` and add a problem file from today, for example `src/dsa/productExceptSelf.ts`, with only a doc comment and a stub:
-
-```ts
-/**
- * Return an array where out[i] is the product of every element except nums[i].
- * No division. Target: O(n) time, O(1) extra space besides the output.
- */
-export function productExceptSelf(nums: number[]): number[] {
-  throw new Error('Not implemented');
-}
-```
-
-Start Claude Code from the repo root (`claude`). If your `CLAUDE.md` coaching section from the first day doesn't already say so, add this line: *"In src/dsa/, never write or reveal solution code unless I explicitly say 'show solution'."*
-
-## 2. Build `/hint` with graduated levels (10 min)
-
-Custom commands are markdown files in `.claude/commands/`. The file name becomes the command name. In the body, `$ARGUMENTS` is everything typed after the command, and `$1`, `$2` are positional arguments. Optional YAML frontmatter can set `description`, `argument-hint`, `allowed-tools` and `model`.
-
-Create `.claude/commands/hint.md`:
-
-```markdown
----
-description: Graduated, Socratic hint for a DS&A problem (never a full solution)
-argument-hint: <problem-file> <level 1-4>
-allowed-tools: Read, Grep, Glob
----
-You are a Socratic algorithms coach. The learner is practising for interviews.
-
-Problem file: $1
-Hint level: $2 (if missing, use 1)
-
-Read the problem file and any code the learner has written in it. Then give
-EXACTLY ONE hint at the requested level:
-
-1. A question that helps them clarify the problem or spot an edge case.
-2. Point at the bottleneck in the brute force ("what work is repeated?")
-   without naming the pattern.
-3. Name the pattern or data structure and the invariant to maintain, as a
-   question if possible.
-4. Pseudocode skeleton of at most 5 lines with the key step left as "???".
-
-Rules:
-- Never write TypeScript that solves the problem, at any level.
-- Never edit files.
-- If their code has a bug, ask a question that leads them to it; don't fix it.
-- End with: "Try it, then run /hint $1 <next level> if you're still stuck."
-```
-
-The `allowed-tools` line pre-approves read-only tools for this command and makes its role obvious when you read the file. Your `CLAUDE.md` rule and the prompt itself are what keep Claude from writing code.
-
-Try it, escalating only when you're really stuck:
+Start Claude Code in fe-gym (`claude`, or `/clear` an open session). Add this to the coaching section of `CLAUDE.md` (or ask Claude to add it and review the diff):
 
 ```text
-/hint src/dsa/productExceptSelf.ts 1
-/hint src/dsa/productExceptSelf.ts 2
+DS&A practice: I write the optimised solutions in src/drills/dsa/*.ts myself.
+Never edit those files or suggest their implementation unless I ask.
+You may write brute-force references, generators and tests next to them.
 ```
 
-> [!AGENT] Why levels?
-> A single "give me a hint" prompt tends to drift towards the answer, because the model wants to be helpful. Explicit levels make the hint size a decision *you* make, and they match how interviewers hint: question → nudge → pattern → skeleton.
+## 2. Write your solution — no AI (8 min)
 
-## 3. Build `/complexity` that asks first (8 min)
+In your editor, create `src/drills/dsa/coinChange.ts` and implement `coinChange(coins: number[], amount: number): number` from memory (bottom-up DP; `-1` when impossible). Talk through the state, transition and base case while you type. Don't run anything yet.
 
-Create `.claude/commands/complexity.md`:
+## 3. Brute force and generator (6 min)
 
-```markdown
----
-description: Review a solution's time/space complexity, learner justifies first
-argument-hint: <solution-file> [function name]
-allowed-tools: Read, Grep, Glob
----
-Act as an interviewer reviewing complexity analysis.
-
-Target: $ARGUMENTS
-
-Step 1: Read the code. Do NOT state its complexity yet.
-Ask me, as an interviewer would:
-  "What are the time and space complexity, what is n, and why?"
-Then stop and wait for my answer.
-
-Step 2: After I answer, grade it:
-- Correct / partially correct / incorrect, for time and space separately.
-- Point out hidden costs I missed (includes/indexOf/shift/slice/spread
-  inside loops, sort, string building, recursion depth, Map growth).
-- If a loop looks nested but is amortised (each element pushed/popped once),
-  check whether I justified that.
-- Ask one follow-up an interviewer would ask (e.g. "can you do it in O(1)
-  extra space?"). Do not write the improved code.
-```
-
-Implement `productExceptSelf` yourself (prefix products left to right, then suffix products right to left), then run:
+Switch to plan mode (**Shift+Tab**) so you can review the approach before any files change:
 
 ```text
-/complexity src/dsa/productExceptSelf.ts
+Read @src/drills/dsa/coinChange.ts but don't change it.
+Plan two new files:
+1. src/drills/dsa/coinChange.brute.ts: coinChangeBrute(coins, amount). Use the most obviously
+   correct algorithm possible (plain recursion trying every coin, no caching, no cleverness).
+   It only needs to work for amount <= 25.
+2. src/test/random.ts: a seeded PRNG (mulberry32) and helpers: randInt(rng, lo, hi),
+   randArray(rng, len, lo, hi). Same seed => same sequence.
+Explain why the brute force is trustworthy and what input sizes it can handle.
 ```
 
-Answer out loud first, then type your answer. Getting graded on what you *said* is the point.
+Check the plan: the brute force must not share logic with your solution (a "reference" that reuses your DP inherits your bugs), and the PRNG must take a seed, so `Math.random` is out. Approve it when it's right.
 
-## 4. Claude writes the tests, you write the solution (8 min)
+> [!AGENT] Keep the oracle dumb
+> A reference implementation is only useful if you can check it **by reading it**. If Claude's brute force contains memoization, sorting tricks or early exits, ask for a simpler one. Slow is fine: it only runs on tiny inputs.
 
-This reverses the usual split. Claude is good at listing adversarial inputs, and *you* need the reps writing the algorithm. Use this prompt pattern for any problem:
+## 4. The differential test (8 min)
 
 ```text
-I'm practising the problem in @src/dsa/productExceptSelf.ts. Do not write or
-suggest an implementation.
-
-Write src/dsa/productExceptSelf.edge.test.ts with Vitest:
-- 8–10 cases, each with a name that says which edge case it targets:
-  empty, single element, zeros (one zero AND two zeros), negatives,
-  duplicates, large n.
-- One test per likely bug, e.g. "uses division" (fails with zeros),
-  "off-by-one in the suffix pass".
-- Compute expected values by hand or with an obviously-correct O(n²)
-  reference INSIDE the test file. Never import my implementation into
-  the reference.
-- Run the tests and show me which fail. Don't touch productExceptSelf.ts.
+Write src/drills/dsa/coinChange.stress.test.ts (Vitest):
+- For seed = 1..500: build an rng from the seed, generate coins (1-4 distinct values
+  in 1..10) and amount (0..25), and compare coinChange vs coinChangeBrute.
+- Generate SMALL cases first (sizes grow with the seed) so the first failure is small.
+- Collect every failing case and sort them by (coins.length + amount). Fail with ONE
+  message showing the smallest case as JSON, both outputs and its seed, so I can paste
+  it into a regular unit test.
+- No snapshot files and no retries. Keep it under 2 seconds.
+Don't touch coinChange.ts.
 ```
 
-Then iterate on your own code until everything is green. If a test looks wrong, ask Claude to *justify the expected value* rather than accepting a change. Tests are a spec, and a spec can have bugs too.
-
-> [!MISTAKE]
-> Asking "why is this test failing?" while your code is open. That invites a fix. Ask "which input makes my output differ from the expected one, and what's special about it?" instead, or use `/hint` at level 1.
-
-## Verify (2 min)
+Run it:
 
 ```bash
-ls .claude/commands/                       # hint.md  complexity.md
-npm test -- --run src/dsa                  # edge-case tests green against YOUR code
-git diff --stat                            # the commands, your solution and the test file
+npm test -- --run src/drills/dsa/coinChange.stress
 ```
 
-Also check: `/hint` at levels 1–3 produced no TypeScript, and `/complexity` asked you a question before giving any analysis. If either one leaked an answer, tighten the wording (e.g. add "If you are about to write code, stop and ask a question instead") and run it again. Commit the commands so they're part of your repo's toolkit:
+If it's green on the first run, good, but check that it can fail. A test that has never failed hasn't shown you anything yet.
+
+## 5. Debug from a minimal counterexample (6 min)
+
+Plant a realistic bug in **your** solution. For example, loop `a < amount` instead of `a <= amount`, or skip the `c <= a` check so `dp[a - c]` reads a negative index. Run the stress test again. You should get something like:
+
+```text
+Smallest failing case (seed 2): {"coins":[1],"amount":1}
+  coinChange      => -1
+  coinChangeBrute => 1
+```
+
+Debug it **yourself** from that input: trace the `dp` array by hand for `amount = 1`. A 2-element counterexample takes seconds to trace, where a 40-element one would take minutes. That's why you sort by size. When you've found it, turn the counterexample into a permanent regression test in `coinChange.test.ts`, then revert the bug.
+
+Then ask for a review, not a fix:
+
+```text
+The stress test found {"coins":[1],"amount":1}. I've fixed it. Without editing my
+solution, tell me whether any other input class is NOT covered by the generator
+(e.g. coins larger than amount, amount = 0, a single coin). Extend the generator if so.
+```
+
+## 6. The industrial version: property-based testing (4 min)
+
+Ask for a short comparison, and install the library only if you want to keep it:
+
+```text
+Show me how this stress test would look with fast-check (fc.assert + fc.property,
+with seed and numRuns parameters). Explain shrinking and how it compares with my
+"sort failures by size" approach. Don't install anything yet.
+```
+
+Key ideas to take away: fast-check generates inputs from **arbitraries** (`fc.array(fc.integer({ min: 1, max: 10 }))`), and when a property fails it **shrinks** the input automatically to a minimal counterexample and prints the seed so you can replay it. Properties don't need a brute force. They can be **invariants**, such as "the coins in the returned combination sum to `amount`" or "`levelOrder(t).flat()` has the same values as the tree".
+
+## Verify
 
 ```bash
-git add .claude/commands src/dsa
-git commit -m "chore: add Socratic /hint and /complexity coaching commands"
+npm test -- --run src/drills/dsa             # unit + stress tests green
+git diff --stat -- src/drills/dsa/coinChange.ts   # only YOUR edits (check git log too)
 ```
 
-## Reflect (write in `notes/dsa-1.md`)
+Optionally repeat steps 3–4 for `numIslands` (brute force: union-find or a recursive flood fill on grids up to 5×5) or `topKFrequent` (brute force: sort all counts). Use a property that ignores order.
 
-- Which hint level did you usually need? What does that say about which step of the method (clarify, bottleneck, pattern, implementation) is your weak spot?
-- Did your spoken complexity analysis match the grade? Which hidden cost did you miss?
-- Which edge-case test caught a real bug in your solution, and would you have thought of that input yourself under pressure?
-- Where did Claude drift towards giving answers, and what wording stopped it?
+## Reflect (write in `notes/dsa-stress.md`)
 
-> [!INTERVIEW] "How do you use AI tools without them doing your thinking?"
-> "I decide what role the agent plays before I start. For skill-building I set it up as a coach: I have project slash commands for graduated hints that never include code, and for complexity reviews that make me justify my analysis first. I also split the work so the agent writes adversarial edge-case tests and I write the implementation. That keeps me doing the reasoning while the tool widens my test coverage. At work it's the same principle with different roles: tests and review as guardrails, and me owning the design decisions."
+- What was the smallest counterexample, and how long did it take to understand compared with a large failing input?
+- Did Claude's first brute force reuse any logic from your solution? How did you notice?
+- Which edge cases did the generator miss at first?
+- Where would a differential test pay off at work? Think of a refactor of a pure function, an old parser against a new one, or a fast path against a slow path.
+
+> [!INTERVIEW] "How do you know your algorithm is correct beyond the examples?"
+> "I test it in layers. First I trace the given examples and the edge cases: empty input, a single element, the impossible case. For anything subtle I stress-test it. I write a brute force that's too slow to ship but easy to trust, generate a few hundred small random inputs from a fixed seed, and compare the two outputs, reporting the smallest disagreement. That smallest input is usually enough to see the bug at a glance, and it becomes a regression test. In production code I'd use property-based testing with fast-check, which shrinks failures automatically. I also use an AI agent for the boilerplate: the reference, the generator and the harness. The optimised code stays mine, and the tests are how I check both."

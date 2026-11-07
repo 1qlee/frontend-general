@@ -557,7 +557,7 @@ await api.post(\`/posts/\${id}/toggle-like\`);`,
       title: 'Speak-aloud drill',
       minutes: 15,
       intro:
-        'Two parts. **(1)** Answer the six concept questions out loud in ~2 minutes each, then compare with the model answer. **(2)** Pick one design prompt and do only its **first eight minutes** against a timer: restate, requirements (functional + non-functional), and an architecture sketch narrated with numbered flows. Then read the model outline and note what you missed. Full 30–40-minute runs come on Day 12 and in the Day 15 mock.',
+        'Two parts. **(1)** Answer the six concept questions out loud in ~2 minutes each, then compare with the model answer. **(2)** Pick one design prompt and do only its **first eight minutes** against a timer: restate, requirements (functional + non-functional), and an architecture sketch narrated with numbered flows. Then read the model outline and note what you missed. Full 30–40-minute runs come on Day 12 and in the final-day mock loop.',
     },
   ],
   flashcards: [

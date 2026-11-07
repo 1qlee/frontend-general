@@ -305,7 +305,7 @@ const day: Day = {
       title: 'Build (and test) accessible components',
       minutes: 65,
       intro:
-        "Interview conditions: timer on, talk out loud, no AI. Start with the two warm-ups, then the dialog and the form — those are the classic UI-round asks. For every component, do a quick manual pass in the preview: Tab through it, use only the keyboard, and say what a screen reader would announce. The write-tests exercise practises the other half of the interview question (\"how would you test it?\"). The combobox is the stretch — do it if you have time, or come back to it on Day 15.",
+        "Interview conditions: timer on, talk out loud, no AI. Start with the two warm-ups, then the dialog and the form — those are the classic UI-round asks. For every component, do a quick manual pass in the preview: Tab through it, use only the keyboard, and say what a screen reader would announce. The write-tests exercise practises the other half of the interview question (\"how would you test it?\"). The combobox is the stretch — do it if you have time, or come back to it on the final interview-simulation day.",
       exercises,
     },
     {

@@ -1,249 +1,171 @@
 import type { Flashcard, InterviewQuestion } from '../../types';
 
 export const flashcards: Flashcard[] = [
-  {
-    id: 'dsa-method-steps',
-    front: 'The eight steps of the problem-solving method?',
-    back: 'Clarify → examples & edge cases → brute force out loud → find the bottleneck & match a pattern → plan (get buy-in) → implement while narrating → trace by hand → state time & space complexity.',
-  },
-  {
-    id: 'constraints-to-complexity',
-    front: 'n ≤ 20, n ≤ 10³–10⁴, n ≤ 10⁵–10⁶: which complexities fit?',
-    back: 'n ≤ 20 → exponential/backtracking OK. n ≤ 10³ → O(n²) fine (≤ 10⁴ maybe). n ≤ 10⁵–10⁶ → O(n log n) or O(n). Values up to 10⁹ → think O(log range) (binary search on the answer).',
-  },
-  {
-    id: 'big-o-rules',
-    front: 'Big-O simplification rules?',
-    back: 'Drop constants (O(2n) → O(n)), drop lower-order terms (O(n² + n) → O(n²)), add sequential steps, multiply nested ones, and use different variables for different inputs (O(a + b), O(a · b)).',
-  },
-  {
-    id: 'recursion-cost',
-    front: 'How do you get time and space for a recursive function?',
-    back: 'Time ≈ number of calls × work per call. Space ≈ maximum call-stack depth (plus allocations per frame). Naive fib: ~2ⁿ calls but only n deep → O(2ⁿ) time, O(n) space.',
-  },
-  {
-    id: 'amortised-o1',
-    front: 'What does "amortised O(1)" mean? Give an example.',
-    back: 'Over any sequence of m operations the total cost is O(m), even if a single operation is occasionally O(n). `array.push` (occasional buffer growth + copy), and push/pop-once stacks and sliding windows.',
-  },
-  {
-    id: 'js-hidden-linear',
-    front: 'Which common JS array/string operations are O(n), not O(1)?',
-    back: '`shift`, `unshift`, `splice` in the middle, `includes`, `indexOf`, `find`, `slice`, spread copies, `str.split`. A `.includes` inside a loop makes it O(n²).',
-  },
-  {
-    id: 'js-sort-facts',
-    front: 'Three facts about `Array.prototype.sort`?',
-    back: 'Default compares as **strings** (`[10, 9, 1].sort()` → `[1, 10, 9]`), so pass `(a, b) => a - b`. It **mutates** (`toSorted` copies, ES2023). O(n log n), stable since ES2019.',
-  },
-  {
-    id: 'js-2d-array',
-    front: 'How do you create a 3×3 grid of zeros without shared rows?',
-    back: '`Array.from({ length: 3 }, () => new Array(3).fill(0))`. `new Array(3).fill(new Array(3).fill(0))` puts the SAME row object in every slot.',
-  },
-  {
-    id: 'map-key-identity',
-    front: 'Why does `map.get([1, 2])` miss after `map.set([1, 2], x)`?',
-    back: 'Map compares object keys by **reference** (SameValueZero). Each `[1, 2]` is a new array. Use a string key: `` `${r},${c}` `` or `sorted.join(\'\')`.',
-  },
-  {
-    id: 'cue-hashing',
-    front: 'Recognition cues for a hash map/set?',
-    back: '"Seen before?", complement/pair lookup, counting frequencies, duplicates, grouping equivalent items by a canonical key. Trades O(n) space for O(1) average lookups.',
-  },
-  {
-    id: 'prefix-sum-subarray',
-    front: 'Prefix-sum trick for "count subarrays summing to k"?',
-    back: 'Subarray (i, j] sums to k ⇔ prefix[i] = prefix[j] − k. Keep a Map of prefix → count seeded with {0: 1}; at each step add map.get(prefix − k). O(n). Works with negatives.',
-  },
-  {
-    id: 'cue-two-pointers',
-    front: 'Recognition cues for two pointers?',
-    back: 'Sorted input with pairs/triplets (opposite ends), palindromes, reversing in place, "remove/move in place with O(1) extra space" (read/write pointers), linked-list middle/cycle (fast/slow).',
-  },
-  {
-    id: 'sliding-window-invariant',
-    front: 'Variable sliding window: template and invariant?',
-    back: 'For each right: expand (add s[right]) → while invalid, remove s[left] and left++ → record (right − left + 1). Invariant: after shrinking, the window is valid. O(n): each index enters and leaves once.',
-  },
-  {
-    id: 'sliding-window-limits',
-    front: 'When does a sliding window NOT work?',
-    back: 'When validity isn\'t monotonic, e.g. "sum equals k" with negative numbers: adding an element can lower the sum, so you can\'t tell which side to move. Use prefix sums + a hash map.',
-  },
-  {
-    id: 'monotonic-stack',
-    front: 'Monotonic stack: when and why O(n)?',
-    back: 'Cue: "next/previous greater or smaller element" (daily temperatures, stock span, histogram). The stack holds unresolved indices in monotonic order; each index is pushed once and popped at most once → O(n) total.',
-  },
-  {
-    id: 'queue-in-js',
-    front: 'How do you implement an O(1) queue in JavaScript?',
-    back: 'Array + head index: `enqueue` = push, `dequeue` = `items[head++]` (compact occasionally). Or a linked list / ring buffer. Not `shift()`, which is O(n).',
-  },
-  {
-    id: 'linked-list-toolkit',
-    front: 'Three linked-list techniques to reach for?',
-    back: '1. Save `next` before re-wiring (reverse: prev/curr/next). 2. Dummy head when the head may change. 3. Fast/slow pointers: middle of the list; Floyd\'s cycle detection in O(1) space.',
-  },
-  {
-    id: 'binary-search-template',
-    front: 'Lower-bound binary search template and invariant?',
-    back: '`lo = 0, hi = n; while (lo < hi) { mid = lo + ((hi - lo) >> 1); if (a[mid] < t) lo = mid + 1; else hi = mid; } return lo;` Invariant: before lo → < t; from hi on → ≥ t.',
-  },
-  {
-    id: 'binary-search-answer-space',
-    front: 'When can you binary search on the answer?',
-    back: 'When feasible(x) is **monotonic** (false…false, true…true) over a range of candidate answers: "minimum capacity/speed/time such that…". Cost: O(log range × cost of feasible).',
-  },
+  { id: 'dsa2-recursion-parts', front: 'The two parts of every correct recursive function?', back: '**Base case**: the smallest input you answer directly (e.g. `null → 0`). **Recursive case**: assume the calls on smaller inputs are correct ("trust the recursion") and combine their results.' },
+  { id: 'dsa2-recursion-space', front: 'Space complexity of recursion over a tree?', back: 'O(h) for the call stack, where h is the height: O(log n) balanced, O(n) degenerate. Recursion is never "free" space.' },
+  { id: 'dsa2-js-stack-limit', front: 'What happens with very deep recursion in JavaScript, and the fix?', back: '`RangeError: Maximum call stack size exceeded` (often fewer than 10k frames; engine-dependent). V8 has no tail-call optimisation. Fix: an explicit stack (iterative DFS) or BFS.' },
+  { id: 'dsa2-dfs-orders', front: 'Pre-, in- and post-order: when to use each?', back: '**Pre** (node first): pass info down — paths, depth, bounds, serialising. **In** (left, node, right): sorted order of a BST. **Post** (children first): combine children\'s answers — height, sizes, deleting.' },
+  { id: 'dsa2-iterative-preorder', front: 'Iterative pre-order DFS: the one detail people get wrong?', back: 'Pop a node, record it, then push **right before left** so the left child is popped first.' },
+  { id: 'dsa2-level-snapshot', front: 'How does level-order BFS know where a level ends?', back: 'Snapshot `queue.length` at the start of the level and dequeue exactly that many nodes (or build a fresh `next` array per level).' },
+  { id: 'dsa2-shift-cost', front: 'Why avoid `queue.shift()` in a big BFS?', back: '`shift()` re-indexes the array: O(n) worst case, so BFS can degrade to O(n²). Use a head index (`queue[head++]`) or swap per-level arrays.' },
+  { id: 'dsa2-validate-bst', front: 'How do you validate a BST correctly?', back: 'Pass `(low, high)` bounds down: left child gets `high = node.val`, right child gets `low = node.val`. Or check that an in-order traversal is strictly increasing. Parent/child comparisons alone are wrong.' },
+  { id: 'dsa2-adjacency-list', front: 'Default graph representation and how to build it in TS?', back: 'Adjacency list: `Array.from({ length: n }, () => [])`, then for each edge push both directions if undirected. O(V + E) space. Never `new Array(n).fill([])` (one shared array).' },
+  { id: 'dsa2-bfs-shortest', front: 'Why does BFS give shortest paths in unweighted graphs?', back: 'It expands in rings of equal distance (1 edge, then 2, …), so the first time it reaches a node is via the fewest edges. Weighted edges → Dijkstra (BFS + min-heap).' },
+  { id: 'dsa2-mark-on-enqueue', front: 'In BFS, when do you mark a node visited?', back: 'When you **enqueue** it. Marking on dequeue lets the same node be enqueued many times by different neighbours.' },
+  { id: 'dsa2-directed-cycle', front: 'How do you detect a cycle in a directed graph?', back: 'DFS with three states: unvisited / visiting (on the current path) / done. Reaching a *visiting* node = back edge = cycle. Or Kahn\'s topological sort: fewer than V nodes output means a cycle.' },
+  { id: 'dsa2-grid-graph', front: 'Grid problems as graphs: the checklist?', back: 'Cells are nodes; 4 (or 8) neighbours via a `DIRS` array; bounds check; visited set (don\'t mutate the input without asking); BFS for fewest steps, DFS/BFS for regions; beware recursion depth.' },
+  { id: 'dsa2-topo-sort', front: 'Topological sort: what, when, cost?', back: 'An order of a DAG where every node comes after its dependencies. Cues: "prerequisites", "build order", "depends on". Kahn\'s (in-degree + queue) or DFS post-order. O(V + E).' },
+  { id: 'dsa2-heap', front: 'What is a binary heap and its costs?', back: 'A complete binary tree in an array, parent ≤ children (min-heap). Peek O(1), push/pop O(log n), heapify O(n). Parent `(i-1)>>1`, children `2i+1`, `2i+2`. JS has none built in.' },
+  { id: 'dsa2-topk-heap', front: 'Top-k largest with a heap: which heap and why?', back: 'A **min**-heap capped at k: its root is the weakest of the current top k, so it\'s the one to evict. O(n log k) time, O(k) space, works on streams.' },
+  { id: 'dsa2-backtracking-template', front: 'Backtracking template in three words, plus the classic bug?', back: '**Choose → explore → unchoose** (push, recurse, pop). Bug: `result.push(path)` instead of `result.push([...path])` — every entry ends up as the same, emptied array.' },
+  { id: 'dsa2-dp-properties', front: 'The two properties that make a problem DP?', back: '**Optimal substructure** (the best answer is built from best sub-answers) and **overlapping subproblems** (naive recursion solves the same subproblem repeatedly).' },
+  { id: 'dsa2-memo-vs-tab', front: 'Memoization vs tabulation in one line each?', back: '**Memoization**: top-down recursion + cache; easiest from a brute force; computes only reached states; stack-depth risk. **Tabulation**: bottom-up loop over a table; no recursion; easy space optimisation.' },
+  { id: 'dsa2-dp-recipe', front: 'The DP recipe?', back: 'State (what `dp[i]` means) → transition ("what was the last choice?") → base cases → fill order → answer → complexity = states × work per state.' },
 ];
 
 export const interviewQuestions: InterviewQuestion[] = [
   {
-    id: 'approach-unseen-problem',
+    id: 'dsa2-explain-recursion',
     kind: 'concept',
-    question: 'Walk me through how you approach an algorithm problem you\'ve never seen before.',
-    answer: `**One-liner:** I follow the same process every time: understand, give examples, brute force, find the bottleneck, plan, code, test, analyse. And I do it out loud so you can follow and redirect me.
+    question: 'Explain recursion. What are its risks in JavaScript, and how do you avoid them?',
+    answer: `**One-liner:** recursion solves a problem by solving smaller instances of the same problem, until it hits a base case it can answer directly.
 
-**In order:**
-1. **Clarify:** restate the problem, then ask about input size, sortedness, duplicates, negatives, empty input, and what to return when there's no answer. The constraint on n tells me the complexity I'm aiming for.
-2. **Examples:** one normal case and a few edge cases written down, so we agree on expected output.
-3. **Brute force:** state the obvious solution and its complexity. That gives me a correct baseline.
-4. **Bottleneck → pattern:** ask what work the brute force repeats. Searching suggests a hash map. Re-summing ranges suggests prefix sums or a window. Sorted input suggests two pointers or binary search. "Next greater" suggests a monotonic stack.
-5. **Plan:** describe the algorithm in a few steps and check it with you before typing.
-6. **Implement** with clear names, narrating *why*, not *what*.
-7. **Trace** an example by hand and run the edge cases.
-8. **Complexity:** time and space, saying what n is.
+**How I think about it:** two parts — a **base case** (an empty tree has depth 0) and a **recursive case** that *trusts* the recursive calls (if I know the depth of each subtree, mine is one plus the larger). I don't trace into the calls; if the base case and the combination step are right, induction does the rest. It's the natural fit for recursive data: the DOM, JSON, component trees, nested comments.
 
-**Why this works:** it makes progress visible even when I don't know the optimal answer yet, and it catches most bugs before you have to point them out.`,
-    followUps: ['What do you do if the brute force is the only idea you have?', 'How much time do you spend before writing code?', 'What questions do you always ask about the input?'],
+**Risks in JS:**
+- **Stack depth.** Every active call is a stack frame, and engines cap the stack — typically a few thousand to a few tens of thousands of frames, depending on the engine and frame size. A degenerate tree, a 50,000-reply comment chain or a flood fill on a big grid throws \`RangeError: Maximum call stack size exceeded\`. V8 doesn't do tail-call optimisation, so tail-recursive style doesn't help.
+- **Hidden space.** Recursion is O(depth) memory, not O(1).
+- **Exponential blow-up** when calls overlap, like naive Fibonacci.
+
+**Mitigations:** when depth is unbounded or user-controlled, I convert to an **explicit stack** or BFS — usually a mechanical change, pushing \`[node, extraState]\` tuples. For overlapping calls, memoize or tabulate.
+
+**Trade-off:** recursion is usually clearer, so I use it for bounded depth (a balanced tree, a UI tree a few dozen levels deep) and go iterative for arbitrary input.`,
+    followUps: ['Convert this recursive DFS to an iterative one.', 'Why doesn\'t tail recursion help in Chrome?', 'What is the space complexity of recursive merge sort?'],
     minutes: 2,
   },
   {
-    id: 'big-o-js-operations',
+    id: 'dsa2-dfs-vs-bfs',
     kind: 'concept',
-    question: 'What is the time complexity of common JavaScript operations: Map/Set lookups, `push`/`pop`, `shift`, `includes`, `sort`, string concatenation?',
-    answer: `**One-liner:** Map/Set operations are O(1) on average, \`push\`/\`pop\` are O(1) (push amortised), anything that scans or moves elements is O(n), and sort is O(n log n).
+    question: 'DFS vs BFS — how do they differ and when do you choose each?',
+    answer: `**One-liner:** BFS explores in rings of increasing distance using a queue; DFS follows one path as deep as it can using a stack (or recursion), then backtracks.
 
-**Detail:**
-- \`map.get/set/has\`, \`set.add/has\`: **O(1) average**. They're hash tables. I say "average" because the spec doesn't guarantee constant time and pathological cases exist.
-- \`arr[i]\`, \`push\`, \`pop\`: O(1). \`push\` is **amortised** O(1): occasionally the engine grows the backing store and copies, but the average per push stays constant.
-- \`shift\`, \`unshift\`, \`splice\` in the middle: **O(n)**, because every following element moves. That's why I don't use \`shift\` for a BFS queue; I use a head index instead.
-- \`includes\`, \`indexOf\`, \`find\`: O(n) linear scans. One inside a loop makes the loop O(n²).
-- \`slice\`, spread, \`split\`, \`Object.keys\`: O(k) copies.
-- \`sort\`: O(n log n), stable since ES2019, sorts **in place**, and compares as strings unless you pass \`(a, b) => a - b\`.
-- Strings are immutable. Concatenating in a loop is fine for small inputs in modern engines, but for big outputs I collect parts in an array and \`join\` once.
+**Choose BFS when distance matters:**
+- Fewest edges/moves in an **unweighted** graph — the first time BFS reaches a node is a shortest path.
+- Level-by-level output, the nearest/shallowest match, multi-source spreading (distance to the nearest exit from every cell).
 
-**Trade-off to mention:** JS has no built-in heap or deque, so I either implement a small one or state the assumption ("assume a MinHeap with O(log n) push/pop") and move on.`,
-    followUps: ['Why is push amortised O(1) rather than O(1)?', 'How would you build an O(1) queue?', 'Is Map faster than a plain object for counting?'],
+**Choose DFS when you need to explore structure:**
+- Reachability, counting connected components, flood fill.
+- Cycle detection and topological sort (they rely on "is this node on my current path?").
+- Tree aggregates (height, subtree sums) via post-order, and backtracking over decision trees.
+
+**Costs:** both are O(V + E) time with a visited set. Space differs: DFS holds the current path, O(h); BFS holds a frontier, O(width). On a wide, shallow tree DFS is lighter; on a deep, narrow one BFS (or iterative DFS) avoids stack overflow in JS.
+
+**Frontend example:** \`querySelector\` is effectively a pre-order DFS — it returns the first match in document order. If I wanted the *shallowest* matching element, I'd write a BFS.`,
+    followUps: ['Why does DFS not give the shortest path?', 'What changes if edges have weights?', 'What is multi-source BFS?'],
     minutes: 2,
   },
   {
-    id: 'hashmap-vs-sorting',
+    id: 'dsa2-detect-cycle',
     kind: 'concept',
-    question: 'When would you use a hash map and when would you sort first? Take Two Sum as an example.',
-    answer: `**One-liner:** a hash map gives O(n) average time at the cost of O(n) memory and no ordering; sorting costs O(n log n) but creates order, enabling two pointers, binary search and O(1)-extra-space solutions.
+    question: 'How would you detect a cycle in a graph — say, circular imports between modules?',
+    answer: `**One-liner:** it depends on whether the graph is directed. Module imports are directed, so I'd use a DFS with three states, or Kahn's topological sort.
 
-**Two Sum specifically:** the brute force checks every pair, O(n²). The inner loop is searching for \`target − x\`, so a hash map of value → index makes it one pass, O(n) time and O(n) space, and it keeps the original indices, which the problem asks for.
+**Directed (imports, task dependencies):** DFS where each node is *unvisited*, *visiting* (on the current DFS path) or *done*. When I start a node, I mark it visiting; when all of its dependencies are finished, I mark it done. If I ever reach a node that's **visiting**, I've found a back edge — a cycle — and the current path gives me the cycle to print, like \`a → b → c → a\`. Reaching a *done* node is fine: that's a shared dependency (a diamond), not a cycle. That's the common mistake — a single visited set reports false positives on diamonds.
 
-Sorting plus two pointers is O(n log n). To return original indices you'd have to sort \`[value, index]\` pairs, which needs O(n) memory anyway. So the hash map wins here.
+**Alternative:** Kahn's algorithm — repeatedly remove nodes with in-degree zero. If some nodes never reach in-degree zero, they're in or behind a cycle. Nice because it produces the build order at the same time.
 
-**When sorting wins:**
-- The input is **already sorted**: two pointers is O(n) time and **O(1)** space, strictly better.
-- You need **ordered output** or relationships between neighbours: merging intervals, finding the closest pair, removing duplicates.
-- **Memory is tight** or keys don't hash well.
-- Follow-ups like 3Sum, where sorting makes duplicate-skipping trivial.
+**Undirected:** DFS where a visited neighbour that isn't my parent means a cycle, or union-find — an edge connecting two nodes already in the same set.
 
-**How I'd say it in the room:** "Hashing trades memory for time and ignores order. Sorting trades time for structure. I pick based on whether I need original positions, whether the data is already sorted, and the memory budget."`,
-    followUps: ['How would you solve 3Sum and what is its complexity?', 'What if the array is too big to fit in memory?', 'What are the worst cases of a hash map?'],
+**Cost:** O(V + E) for all of them. In practice this is what bundlers and monorepo tools do to warn about circular dependencies.`,
+    followUps: ['How would you report the actual cycle path?', 'Why does a diamond dependency confuse a naive visited set?', 'How does union-find detect a cycle?'],
     minutes: 2,
   },
   {
-    id: 'when-sliding-window',
+    id: 'dsa2-heap-frontend',
     kind: 'concept',
-    question: 'How do you recognise a sliding-window problem, and when does the technique break down?',
-    answer: `**One-liner:** I reach for a sliding window when the question is about a **contiguous** subarray or substring, usually "longest", "shortest" or "at most K", and the window's state can be updated incrementally as its edges move.
+    question: 'What is a heap, and when would you use one in a frontend context?',
+    answer: `**One-liner:** a heap is a complete binary tree stored in an array where each parent is smaller than its children (for a min-heap), so the minimum is always at index 0 — it's the standard way to implement a priority queue.
 
-**The template:** for each \`right\`, add \`s[right]\` to the window state. *While* the window is invalid, remove \`s[left]\` and advance \`left\`. Then record the answer. The **invariant** is "after the shrink loop, the window is valid". Writing that sentence down tells me what state to keep (a sum, a count map, a set of characters).
+**Costs:** peek O(1), insert and remove-min O(log n) via sift-up and sift-down, building from n items O(n). Index math replaces pointers: parent \`(i - 1) >> 1\`, children \`2i + 1\` and \`2i + 2\`. JavaScript has no built-in heap, so in an interview I ask whether I can assume one, or write a ~30-line class.
 
-**Why it's O(n):** \`left\` and \`right\` only move forward, so each element enters and leaves the window once. The nested \`while\` is amortised.
+**When it pays off:**
+- **Top-k from a stream** — a trending list or leaderboard fed by a WebSocket. A min-heap capped at k keeps the best k in O(n log k) time and O(k) memory.
+- **Scheduling** — React's scheduler keeps tasks in a min-heap ordered by expiration time so the most urgent work is always on top.
+- **Merging k sorted sources** — combining paginated timelines from several services in O(N log k).
+- Dijkstra-style shortest paths, e.g. routing on a map widget.
 
-**When it breaks:** the window needs **monotonic validity**. Growing a window should only make it "more" of something and shrinking "less". With negative numbers, "sum equals k" isn't monotonic: adding an element can lower the sum, so I can't decide which edge to move. Then I switch to **prefix sums plus a hash map**: subarray \`(i, j]\` sums to k when \`prefix[i] = prefix[j] − k\`.
-
-**Example:** longest substring without repeating characters is a window with a last-seen map, where \`left\` jumps past the previous occurrence but never moves backwards.`,
-    followUps: ['Fixed vs variable window: what changes?', 'How would you return the substring itself?', 'How do you solve "minimum window containing all characters of t"?'],
+**When it doesn't:** for a few hundred items in the UI, \`[...items].sort(cmp).slice(0, k)\` is clearer and fast enough — I'd say that out loud and mention the heap as the scaling path. If keys are small bounded integers, bucket sort is O(n).`,
+    followUps: ['Why a MIN-heap for the k LARGEST items?', 'Implement push and pop.', 'How is heapify O(n) rather than O(n log n)?'],
     minutes: 2,
   },
   {
-    id: 'binary-search-answer-space-iq',
+    id: 'dsa2-explain-dp',
     kind: 'concept',
-    question: 'Binary search is usually explained on sorted arrays. How can it apply when there is no sorted array?',
-    answer: `**One-liner:** binary search really needs a **monotonic yes/no predicate**, not a sorted array. If \`feasible(x)\` is false up to some point and true after it, I can binary search over the candidate answers x.
+    question: 'Explain dynamic programming simply, with an example.',
+    answer: `**One-liner:** dynamic programming is recursion that remembers — when a problem's best answer is built from best answers to smaller subproblems, and those subproblems repeat, you solve each one once and reuse it.
 
-**Example:** "minimum ship capacity to deliver packages in D days". If capacity c works, any larger capacity works too, so it's monotonic. The answer is between \`max(weight)\` (must carry the heaviest) and \`sum(weights)\` (everything in one day). I binary search that range. Each check is a greedy O(n) simulation, so the total is O(n log(sum)).
+**Example — climbing stairs:** you can take 1 or 2 steps; how many ways to reach step n? The last move came from n − 1 or n − 2, so \`ways(n) = ways(n − 1) + ways(n − 2)\`. Naively that recursion is exponential — \`ways(40)\` makes hundreds of millions of calls because \`ways(38)\` is computed again and again. Caching each result makes it n calls: O(n).
 
-**The template I use:** half-open \`lo, hi\`, \`while (lo < hi)\`. If \`feasible(mid)\` then \`hi = mid\`, else \`lo = mid + 1\`. Return \`lo\`. The invariant is that everything below \`lo\` is infeasible and \`hi\` is always feasible, so they meet at the first feasible value. It's the same code as lower bound on an array.
+**The two properties to name:** **optimal substructure** (the answer is composed from sub-answers) and **overlapping subproblems** (the same sub-answer is needed many times). Without overlap, plain recursion is fine — merge sort isn't DP.
 
-**Cues:** "minimum X such that…", "maximum X such that…", "minimise the largest…", and huge value ranges like 10⁹ where scanning every candidate is impossible.
+**My recipe in an interview:** define the **state** in one sentence (\`dp[a]\` = fewest coins for amount a), find the **transition** by asking "what was the last choice?" (the last coin c → \`dp[a − c] + 1\`), set **base cases** (\`dp[0] = 0\`), pick a **fill order**, and state the complexity as number of states × work per state — O(amount × coins) for coin change.
 
-**Frontend example:** finding the largest font size that still fits a container, or finding the first visible row in a virtualised list by binary searching cumulative row offsets.`,
-    followUps: ['How do you prove the predicate is monotonic?', 'What changes if you need the maximum instead of the minimum?', 'How do you avoid an infinite loop?'],
+**Sanity check:** I also try a greedy counterexample — coins [1, 3, 4] for 6 — which shows why DP is needed at all.`,
+    followUps: ['How do you know it is DP rather than greedy?', 'Walk me through house robber.', 'How would you reduce the space?'],
     minutes: 2,
   },
   {
-    id: 'time-vs-space',
+    id: 'dsa2-memo-vs-tabulation',
     kind: 'concept',
-    question: 'Talk about time-versus-space trade-offs. Give examples of spending memory to save time, and the reverse.',
-    answer: `**One-liner:** many optimisations precompute or remember something so you don't recompute it. That costs memory, and whether it's worth it depends on input size, how often you query, and the memory budget.
+    question: 'Memoization vs tabulation — what is the difference and which do you prefer?',
+    answer: `**One-liner:** both cache subproblem results; memoization does it **top-down** with recursion plus a cache, tabulation does it **bottom-up** with a loop that fills a table from the base cases.
 
-**Memory for time:**
-- **Hash maps**: Two Sum goes from O(n²)/O(1) to O(n)/O(n).
-- **Prefix sums**: O(n) extra space turns every range-sum query into O(1).
-- **Memoization**: naive Fibonacci is O(2ⁿ); caching results makes it O(n) time and O(n) space. In frontend terms that's \`useMemo\` or a selector cache.
-- **Indexes**: a \`Map<id, item>\` next to an array for O(1) lookups in a normalised store.
+**Memoization:** I write the natural recursive brute force and add a \`Map\` keyed by the arguments — literally the \`memoize\` higher-order function, applied to a recursive function. Pros: quickest path from brute force to a correct solution, and it only computes states that are actually reached. Cons: recursion depth — in JavaScript a memoized \`coinChange([1], 100000)\` overflows the call stack — and some overhead from calls and hashing.
 
-**Time for memory:**
-- **Two pointers on sorted data** instead of a hash set: O(1) extra space.
-- **Floyd's cycle detection** instead of a visited set: O(1) instead of O(n).
-- **Iterative instead of recursive**: avoids O(n) call-stack depth (reversing a 100k-node list recursively overflows the stack).
-- **Recompute on demand** instead of caching, when the cache would grow without bound. That's why LRU caches exist.
+**Tabulation:** I define \`dp\` as an array, set base cases, and loop in an order where every dependency is ready. Pros: no recursion, predictable performance, and easy **space optimisation** — house robber only needs the last two values, so O(1) space; many 2-D DPs only need the previous row. Cons: I have to work out the fill order, and it computes every state even if some aren't needed.
 
-**How I decide:** I check the constraints. If n is small, the simpler solution wins. If memory is constrained (mobile, huge inputs, long-lived caches), I bound it. And I say the trade-off out loud. Interviewers often follow up with "can you do it in O(1) space?", so naming it first shows I saw it.`,
-    followUps: ['Can you solve Two Sum in O(1) extra space?', 'What is an LRU cache and why is it a time/space compromise?', 'Does space complexity include the output?'],
+**What I do in interviews:** brute force → point at the repeated subproblem → memoize (correct and polynomial) → if there's time or the input is large, convert to a table and trim the space. Saying that progression out loud shows the interviewer I understand they're the same algorithm.`,
+    followUps: ['When would memoization compute fewer states than tabulation?', 'Convert climbing stairs to O(1) space.', 'What is a good cache key for multi-argument states?'],
     minutes: 2,
   },
   {
-    id: 'when-stuck',
+    id: 'dsa2-recognise-pattern',
     kind: 'concept',
-    question: 'What do you do when you get stuck in a coding interview?',
-    answer: `**One-liner:** I make being stuck visible and structured. I say where I'm stuck, go back to what I know works, and try systematic ways forward instead of going silent.
+    question: 'You get a problem you have never seen. How do you work out which pattern or algorithm it needs?',
+    answer: `**One-liner:** I let the problem's wording, input shape and constraints narrow it down, then I start from a brute force and ask what the bottleneck is.
 
-**My steps:**
-1. **Name it:** "I'm stuck on how to avoid re-scanning the window when I find a duplicate." A specific statement invites a useful hint.
-2. **Return to the brute force:** what work is repeated? Naming it usually points at a pattern.
-3. **Walk the pattern checklist:** is it sorted (two pointers, binary search)? Contiguous (window, prefix sums)? Pairs or counts (hash map)? Nesting or "next greater" (stack)? Is there a monotonic yes/no (binary search on the answer)?
-4. **Shrink the problem:** solve n = 3 by hand, or a simpler variant (no negatives, already sorted), and look at what my hands did.
-5. **Use hints well:** interviewers expect to give hints. I acknowledge one, connect it to my plan, and keep going.
-6. **Protect the outcome:** if time is short, I code the brute force cleanly and explain the optimisation in words. A correct O(n²) with a clear path to O(n) scores better than an unfinished O(n).
+**1. Clarify and read the cues.** Specific phrases map to patterns: "contiguous subarray/substring" → sliding window or prefix sums; "sorted" → two pointers or binary search; "pairs/duplicates/seen before" → hash map; "top/k-th" → heap; "fewest steps", "levels", "nearest" → BFS; "connected", "regions", a grid → DFS/BFS with visited; "prerequisites/order" → topological sort; "all combinations/permutations" → backtracking; "how many ways / min cost" with choices → DP.
 
-**What I avoid:** silent minutes, deleting everything and restarting, and pretending I'm not stuck. Interviewers grade collaboration and recovery as much as the final answer.`,
-    followUps: ['How do you react when the interviewer gives you a hint you don\'t understand?', 'What if you realise halfway through coding that your approach is wrong?'],
+**2. Use the constraints.** n ≤ 20 means exponential is acceptable; n ≤ 10⁴ allows O(n²); n ≥ 10⁵ needs O(n log n) or O(n).
+
+**3. Brute force first, out loud.** It gives me a correct baseline and the interviewer a checkpoint. Then I find the bottleneck — "I'm re-scanning the array for each element" → hash map; "I'm recomputing the same subproblem" → memoize; "I re-sum the window every time" → sliding window.
+
+**4. Model it.** If entities have relationships, I say "nodes are X, edges are Y" — many problems become BFS/DFS once modelled.
+
+**5. Verify with examples** before coding: does the pattern handle the edge cases?
+
+If I'm stuck, I say which patterns I've ruled out and why — that's useful signal, and interviewers often nudge at exactly that point.`,
+    followUps: ['What does n ≤ 10⁵ tell you?', 'Give an example where two patterns both work.', 'What do you do if the brute force is all you can get?'],
     minutes: 2,
   },
   {
-    id: 'monotonic-stack-explain',
+    id: 'dsa2-trees-in-frontend',
     kind: 'concept',
-    question: 'Explain the monotonic stack. Why is "a loop inside a loop" O(n) here?',
-    answer: `**One-liner:** a monotonic stack keeps indices in increasing or decreasing order of value so that each new element can immediately resolve all the earlier elements it "beats". It solves next-greater or next-smaller problems in O(n).
+    question: 'Where do trees and graphs show up in real frontend work?',
+    answer: `**One-liner:** constantly — the DOM, React's component tree, JSON and nested UI data are trees, and anything with dependencies or links is a graph.
 
-**Example, daily temperatures:** I keep a stack of days that haven't found a warmer day yet. Their temperatures are non-increasing from bottom to top, because a colder day under a warmer one would already have been resolved. When today is warmer than the top, I pop it and record \`today − thatDay\`, and repeat. Then I push today.
+**Trees:**
+- **The DOM** — \`querySelector\` is a pre-order DFS; event propagation walks the ancestor path; \`contains\` checks ancestry.
+- **React** — reconciliation diffs two element trees. A general tree diff is O(n³), so React uses heuristics (same type at same position, keys for lists) to make it O(n). That's why stable keys matter.
+- **Nested data** — comment threads, menus, file explorers, JSON schemas driving forms. I flatten them with a DFS carrying depth for indentation, or for virtualised rendering.
 
-**Why O(n):** the inner \`while\` looks nested, but every index is pushed exactly once and popped at most once. Over the whole run there are at most n pops, so the total work is O(n). That's amortised analysis: the cost of the pops is spread across the pushes that made them possible.
+**Graphs:**
+- **Module graphs** in bundlers — topological order for evaluation, cycle detection for circular-import warnings, tree shaking as reachability from entry points.
+- **Monorepo task graphs** — build order and caching.
+- **Routing / navigation flows**, social graphs ("people you may know" is BFS at distance 2), dependency-aware form fields that recompute when an input changes (spreadsheet-style topological recalculation).
 
-**Recognition cues:** "next greater/smaller element", "how many days until…", "stock span", "largest rectangle in histogram", "remove k digits to make the smallest number".
-
-**Why indices, not values:** the answer is a *distance* (\`i − j\`), and indices let me look up the value anyway with \`temps[j]\`.`,
-    followUps: ['Increasing vs decreasing stack: how do you choose?', 'How would you handle a circular array?', 'Why store indices instead of values?'],
+**Practical concerns I raise:** user-generated nesting can be arbitrarily deep, so I avoid unbounded recursion; and I normalise graph-shaped API data into id-keyed maps so updates are O(1) and the UI doesn't hold duplicate copies.`,
+    followUps: ['Why does React need keys, in tree-diff terms?', 'How would you find the shallowest element with a given class?', 'How does tree shaking relate to graph reachability?'],
     minutes: 2,
   },
 ];

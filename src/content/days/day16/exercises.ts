@@ -1,393 +1,428 @@
 import type { Exercise } from '../../types';
 
-import twoSumStarter from './exercises/two-sum/starter.ts?raw';
-import twoSumSolution from './exercises/two-sum/solution.ts?raw';
-import twoSumTests from './exercises/two-sum/tests.ts?raw';
-import anagramsStarter from './exercises/group-anagrams/starter.ts?raw';
-import anagramsSolution from './exercises/group-anagrams/solution.ts?raw';
-import anagramsTests from './exercises/group-anagrams/tests.ts?raw';
-import substringStarter from './exercises/longest-unique-substring/starter.ts?raw';
-import substringSolution from './exercises/longest-unique-substring/solution.ts?raw';
-import substringTests from './exercises/longest-unique-substring/tests.ts?raw';
-import subarrayStarter from './exercises/subarray-sum-k/starter.ts?raw';
-import subarraySolution from './exercises/subarray-sum-k/solution.ts?raw';
-import subarrayTests from './exercises/subarray-sum-k/tests.ts?raw';
-import reverseStarter from './exercises/reverse-linked-list/starter.ts?raw';
-import reverseSolution from './exercises/reverse-linked-list/solution.ts?raw';
-import reverseTests from './exercises/reverse-linked-list/tests.ts?raw';
-import searchStarter from './exercises/search-insert/starter.ts?raw';
-import searchSolution from './exercises/search-insert/solution.ts?raw';
-import searchTests from './exercises/search-insert/tests.ts?raw';
-import tempsStarter from './exercises/daily-temperatures/starter.ts?raw';
-import tempsSolution from './exercises/daily-temperatures/solution.ts?raw';
-import tempsTests from './exercises/daily-temperatures/tests.ts?raw';
+import maxDepthStarter from './exercises/max-depth/starter.ts?raw';
+import maxDepthSolution from './exercises/max-depth/solution.ts?raw';
+import maxDepthTests from './exercises/max-depth/tests.ts?raw';
+import levelOrderStarter from './exercises/level-order/starter.ts?raw';
+import levelOrderSolution from './exercises/level-order/solution.ts?raw';
+import levelOrderTests from './exercises/level-order/tests.ts?raw';
+import islandsStarter from './exercises/number-of-islands/starter.ts?raw';
+import islandsSolution from './exercises/number-of-islands/solution.ts?raw';
+import islandsTests from './exercises/number-of-islands/tests.ts?raw';
+import shortestPathStarter from './exercises/shortest-path/starter.ts?raw';
+import shortestPathSolution from './exercises/shortest-path/solution.ts?raw';
+import shortestPathTests from './exercises/shortest-path/tests.ts?raw';
+import topKStarter from './exercises/top-k-frequent/starter.ts?raw';
+import topKSolution from './exercises/top-k-frequent/solution.ts?raw';
+import topKTests from './exercises/top-k-frequent/tests.ts?raw';
+import subsetsStarter from './exercises/subsets/starter.ts?raw';
+import subsetsSolution from './exercises/subsets/solution.ts?raw';
+import subsetsTests from './exercises/subsets/tests.ts?raw';
+import coinChangeStarter from './exercises/coin-change/starter.ts?raw';
+import coinChangeSolution from './exercises/coin-change/solution.ts?raw';
+import coinChangeTests from './exercises/coin-change/tests.ts?raw';
 
-export const twoSum: Exercise = {
-  id: 'dsa-two-sum',
-  title: 'Two Sum (return indices)',
+const TREE_HELPERS = `The starter **provides** a \`TreeNode\` class plus \`fromLevelOrder(values)\` / \`toLevelOrder(root)\` (LeetCode's array format, with \`null\` for a missing child) and \`chain(n)\` (a degenerate tree). The tests use them. You only write the algorithm at the bottom of the file.`;
+
+export const maxDepth: Exercise = {
+  id: 'dsa-max-depth',
+  title: 'Maximum depth of a binary tree',
   runtime: 'logic',
   difficulty: 'warm-up',
-  estMinutes: 7,
-  tags: ['dsa', 'hashing'],
-  prompt: `Given an array of numbers and a \`target\`, return the indices \`[i, j]\` (with \`i < j\`) of the two numbers that add up to \`target\`. Return \`null\` if there is no such pair. You may not use the same element twice. Each input has at most one valid pair.
+  estMinutes: 6,
+  tags: ['dsa', 'trees', 'dfs', 'recursion'],
+  prompt: `Return the **maximum depth** of a binary tree: the number of *nodes* on the longest path from the root down to a leaf.
+
+${TREE_HELPERS}
 
 \`\`\`ts
-twoSum([2, 7, 11, 15], 9); // [0, 1]
-twoSum([3, 2, 4], 6);      // [1, 2]  (not [0, 0]: there is only one 3)
-twoSum([3, 3], 6);         // [0, 1]
-twoSum([1, 2], 10);        // null
+maxDepth(fromLevelOrder([3, 9, 20, null, null, 15, 7])); // 3
+//     3
+//    / \\
+//   9  20
+//      / \\
+//     15  7
+maxDepth(null);               // 0
+maxDepth(new TreeNode(1));    // 1
 \`\`\`
 
-**Constraints:** \`0 ≤ nums.length ≤ 10⁵\`; values and target can be negative. Don't mutate \`nums\`.
+**Constraints:** up to ~10⁴ nodes; values are irrelevant. The tests include a 2,000-level "linked list" tree.
 
-**What the interviewer is looking for:** you state the O(n²) brute force, name the bottleneck ("the inner loop is searching for a complement"), and move to a one-pass hash map. Bonus points for explaining *why* you check the map before inserting.
+**What the interviewer is looking for:** a clear base case (\`null → 0\`), the "trust the recursion" step stated out loud (*"if I know the depth of each subtree, mine is 1 + the larger"*), correct complexity — and, for bonus points, knowing that recursion depth equals tree height, so a degenerate tree can overflow the call stack.
 
-**Expected complexity:** O(n) time, O(n) extra space. A performance test with 60,000 numbers will time out a nested loop.`,
-  starter: twoSumStarter,
-  solution: twoSumSolution,
-  tests: twoSumTests,
+**Expected complexity:** O(n) time, O(h) space (h = height: log n if balanced, n if degenerate).`,
+  starter: maxDepthStarter,
+  solution: maxDepthSolution,
+  tests: maxDepthTests,
   hints: [
-    'Brute force tries every pair. What is the inner loop actually looking for, given nums[j]?',
-    'You need the value `target - nums[j]`. Which data structure answers "have I seen this value, and where?" in O(1)?',
-    'One pass with `Map<value, index>`: look up the complement first, return if found, then store the current value. Checking before inserting stops an element pairing with itself.',
+    'What is the depth of an empty tree? That is your base case.',
+    'If a function already gave you the depth of the left and right subtrees, how would you combine them?',
+    '`return root === null ? 0 : 1 + Math.max(maxDepth(root.left), maxDepth(root.right));`',
   ],
-  explanation: `**Brute force:** two nested loops over all pairs \`i < j\`, O(n²) time, O(1) space. Correct, but 5 × 10⁹ pair checks at n = 10⁵.
+  explanation: `**Brute force?** There isn't a slower sensible approach here — any correct solution must look at every node, so O(n) is optimal. The interesting decision is *recursive vs iterative*.
 
-**Bottleneck:** for each \`j\`, the inner loop *searches* for one specific value, \`target − nums[j]\`. Searching is what hash maps are for.
+**Pattern:** post-order DFS — compute the answer for the children, then combine at the parent. "Return a value up the tree" is the most common tree recursion shape (height, size, sum, balanced?, diameter).
 
-**Pattern:** complement lookup with a hash map.
+**Walk-through** on \`[3, 9, 20, null, null, 15, 7]\`: \`depth(9) = 1 + max(0, 0) = 1\`, \`depth(15) = depth(7) = 1\`, \`depth(20) = 1 + max(1, 1) = 2\`, \`depth(3) = 1 + max(1, 2) = 3\`.
 
-**Optimal:** walk the array once. For each \`j\`, look up \`target − nums[j]\` in a \`Map<number, number>\` from value to index. If it's there, return \`[thatIndex, j]\`. Otherwise store \`nums[j] → j\` and continue. Because you only look *backwards*, \`i < j\` holds automatically, and checking before inserting means \`[3, 2, 4]\` with target 6 can't return \`[0, 0]\`.
+**Complexity:** O(n) time (each node visited once). O(h) space for the call stack: O(log n) balanced, O(n) for a chain.
 
-**Complexity:** O(n) time (one pass; each map operation is O(1) on average), O(n) space for the map in the worst case.
+**Edge cases:** \`null\` root, single node, a lopsided tree where the deepest leaf is in the middle (don't just follow the leftmost path).
 
-**Edge cases:** empty or one-element input (the loop finds nothing → \`null\`); duplicates (\`[3, 3]\` works because the first 3 is stored before the second is checked); negatives and zero (nothing special, since subtraction handles them).
+**Iterative version (BFS by level):**
 
-**Common follow-ups:**
-- *"The array is sorted. Can you use O(1) space?"* → two pointers from both ends, moving the smaller side up if the sum is too small: O(n) time, O(1) space.
-- *"Return all unique pairs"* → sort + two pointers while skipping duplicates, or a map of counts.
-- *"3Sum"* → sort, then for each \`i\` run two-pointer Two Sum on the rest: O(n²), which is optimal for that problem.
-- *"Why a Map and not an object?"* → numeric keys get stringified on objects, and \`Map\` has clear O(1) \`has/get\` semantics without prototype keys.`,
+\`\`\`ts
+let depth = 0, level = [root];
+while (level.length) { depth++; level = level.flatMap((n) => [n.left, n.right].filter(Boolean)); }
+\`\`\`
+
+**Follow-ups:**
+- *"What if the tree is 1,000,000 levels deep?"* → the recursive version throws \`RangeError: Maximum call stack size exceeded\` (JS engines allow somewhere from a few thousand to tens of thousands of frames; V8 has no tail-call optimisation). Use BFS or an explicit stack of \`[node, depth]\` pairs.
+- *"Minimum depth?"* → careful: a node with one child is not a leaf, so \`1 + min(left, right)\` is wrong when one side is \`null\`. BFS and stop at the first leaf is cleanest.
+- *"Is the tree balanced?"* → same post-order recursion, returning \`-1\` as a sentinel for "unbalanced" so it stays O(n).
+- *Frontend version:* "max nesting depth of a DOM subtree / a JSON object / a comment thread" — same code over \`children\`.`,
 };
 
-export const groupAnagrams: Exercise = {
-  id: 'dsa-group-anagrams',
-  title: 'Group anagrams',
+export const levelOrder: Exercise = {
+  id: 'dsa-level-order',
+  title: 'Binary tree level-order traversal',
+  runtime: 'logic',
+  difficulty: 'core',
+  estMinutes: 9,
+  tags: ['dsa', 'trees', 'bfs', 'queue'],
+  prompt: `Return the node values **level by level**, left to right, as \`number[][]\`.
+
+${TREE_HELPERS}
+
+\`\`\`ts
+levelOrder(fromLevelOrder([3, 9, 20, null, null, 15, 7])); // [[3], [9, 20], [15, 7]]
+levelOrder(fromLevelOrder([1, 2, 3, null, 4, 5]));          // [[1], [2, 3], [4, 5]]
+levelOrder(null);                                           // []
+\`\`\`
+
+**Constraints:** up to ~10⁴ nodes; values may repeat or be negative.
+
+**What the interviewer is looking for:** recognising "level by level" as **BFS with a queue**, the *snapshot-the-queue-length* trick to know where a level ends, an O(1) dequeue (not \`shift()\` in a hot loop on big inputs — or at least mentioning it), and correct handling of the empty tree.
+
+**Expected complexity:** O(n) time, O(w) extra space where w is the widest level (up to n/2).`,
+  starter: levelOrderStarter,
+  solution: levelOrderSolution,
+  tests: levelOrderTests,
+  hints: [
+    '"Level by level" = breadth-first. Which data structure gives you first-in, first-out?',
+    'At the start of each level, everything in the queue belongs to that level. Record `queue.length` before you start dequeuing.',
+    'Loop exactly `levelSize` times: dequeue, push the value into `level`, enqueue non-null children. Then push `level` into the result.',
+  ],
+  explanation: `**Brute force:** compute each node's depth with a DFS, then group by depth (a \`Map<number, number[]>\` or \`result[depth] ??= []\`). That is actually *also* O(n) and a perfectly valid answer — say so! It just uses recursion (stack depth = height) and is less direct.
+
+**Bottleneck / why BFS:** BFS naturally visits nodes in level order, so no grouping step is needed — you only need to know where one level ends and the next begins.
+
+**Pattern:** BFS with a queue + **level-size snapshot**. When a level starts, the queue contains exactly that level's nodes; their children are appended behind them.
+
+**Walk-through** on \`[3, 9, 20, null, null, 15, 7]\`: queue \`[3]\` → size 1 → level \`[3]\`, queue \`[9, 20]\` → size 2 → level \`[9, 20]\`, queue \`[15, 7]\` → level \`[15, 7]\` → queue empty, done.
+
+**Complexity:** O(n) time. O(w) queue space — for a perfect tree the last level is ~n/2 nodes.
+
+**JS detail worth saying out loud:** \`Array.prototype.shift()\` is O(n) in the worst case because it re-indexes the array. The reference solution keeps a \`head\` index instead (the array is a queue that only grows). Alternatives: build a \`next\` array per level and swap, or a small ring-buffer/linked-list queue.
+
+**Edge cases:** empty tree → \`[]\` (not \`[[]]\`), one branch ending early, children from *different* parents on the same level (left-to-right order must hold).
+
+**Follow-ups:**
+- *Zigzag order* → reverse every other level (or push to the front with a deque).
+- *Right side view* → the last value of each level.
+- *Average / max per level* → reduce each level.
+- *Frontend version:* "render a sitemap or org chart row by row", "find the shallowest element matching a selector" — BFS finds the *closest* match first; DFS (like \`querySelector\`) finds the first in document order.`,
+};
+
+export const numIslands: Exercise = {
+  id: 'dsa-number-of-islands',
+  title: 'Number of islands (grid as a graph)',
   runtime: 'logic',
   difficulty: 'core',
   estMinutes: 10,
-  tags: ['dsa', 'hashing', 'strings'],
-  prompt: `Group words that are anagrams of each other (same letters, same counts, any order).
+  tags: ['dsa', 'graphs', 'grid', 'dfs', 'bfs', 'connected components'],
+  prompt: `Given a grid of \`'1'\` (land) and \`'0'\` (water), count the **islands**. An island is a group of land cells connected **horizontally or vertically** (not diagonally). Everything outside the grid is water.
 
 \`\`\`ts
-groupAnagrams(['eat', 'tea', 'tan', 'ate', 'nat', 'bat']);
-// [['eat', 'tea', 'ate'], ['tan', 'nat'], ['bat']]
-groupAnagrams(['']);   // [['']]
-groupAnagrams([]);     // []
+numIslands([
+  ['1', '1', '0', '0', '0'],
+  ['1', '1', '0', '0', '0'],
+  ['0', '0', '1', '0', '0'],
+  ['0', '0', '0', '1', '1'],
+]); // 3
 \`\`\`
 
-**Output order (so the tests are deterministic):** groups appear in order of their first word's appearance in the input, and words inside a group keep their input order.
+**Constraints:** \`grid\` may be empty; rows all have the same length; up to ~300 × 300.
 
-**Constraints:** up to 10⁴ words, each up to 100 lowercase letters \`a–z\` (the empty string is allowed). Don't mutate the input.
+**You must not mutate the input.** The classic LeetCode trick of overwriting visited land with \`'0'\` is fine *if the interviewer agrees* — but here, as in most real code, the caller still owns the grid. Keep your own visited set (the tests check the grid is unchanged).
 
-**What the interviewer is looking for:** recognising "group things that are equivalent" as **hash map + canonical key**, and being able to compare two key choices (sorted letters vs letter counts) with their complexity.
+**What the interviewer is looking for:** seeing the grid as an **implicit graph** (cells are nodes, 4 neighbours are edges), "count connected components = scan + flood fill", bounds checks, a visited structure, and a word about recursion depth on large all-land grids.
 
-**Expected complexity:** O(n · k log k) with a sorted-letters key, or O(n · k) with a letter-count key (n words, max length k).`,
-  starter: anagramsStarter,
-  solution: anagramsSolution,
-  tests: anagramsTests,
+**Expected complexity:** O(rows × cols) time and space.`,
+  starter: islandsStarter,
+  solution: islandsSolution,
+  tests: islandsTests,
   hints: [
-    'Comparing every pair of words is O(n² · k). Instead, can you compute something from each word on its own that is identical for all of its anagrams?',
-    'Two canonical keys work: the sorted letters (`[...w].sort().join(\'\')`) or the 26 letter counts. Use the key in a `Map<string, string[]>`. A Map also preserves insertion order for you.',
-    'If you build the key from counts, join them with a separator (`counts.join(\'#\')`): without one, counts [1, 11] and [11, 1] both become "111". Keys must be strings, because array keys are compared by reference.',
+    'Scan every cell. When you find unvisited land, you have found a NEW island — count it, then mark the whole island as visited so you never count it again.',
+    '"Mark the whole island" is a DFS or BFS from that cell to its 4 neighbours (up, down, left, right), skipping out-of-bounds cells, water and visited cells.',
+    'Keep visited as a `Set<string>` of `${r},${c}` or, faster, a flat `Uint8Array(rows * cols)` indexed by `r * cols + c`. Mark a cell visited when you push it, not when you pop it.',
   ],
-  explanation: `**Brute force:** for each word, compare it with the first word of every existing group using an anagram check. That's O(n² · k) in the worst case (every word in its own group).
+  explanation: `**Brute force:** for each pair of land cells, ask "are they connected?" and union them — O((rc)²) or worse. Nobody does this, but naming it shows you know why the graph view matters.
 
-**Bottleneck:** comparing words *against each other*. If each word can produce a key that's identical exactly for its anagrams, we never compare pairs at all.
+**Pattern:** **connected components on an implicit graph.** Outer loop over all cells; each time you find unvisited land, increment the count and **flood-fill** (DFS or BFS) to mark the entire component. Each cell is visited a constant number of times.
 
-**Pattern:** grouping by a canonical key in a hash map.
+**Walk-through** on the example: (0,0) is new land → count 1, flood marks (0,0),(0,1),(1,0),(1,1). Scan continues; (2,2) → count 2, flood marks just itself. (3,3) → count 3, flood marks (3,3),(3,4). Every other land cell is already visited.
 
-**Optimal:** for each word compute a key, then \`groups.get(key)?.push(word)\` or create the group. Return \`[...groups.values()]\`. Since \`Map\` iterates in insertion order, groups come out in order of first appearance.
+**Complexity:** O(R·C) time — each cell is pushed at most once and checks 4 neighbours. O(R·C) space for \`visited\` plus the stack/queue.
 
-Two key choices to compare out loud:
-- **Sorted letters:** \`[...w].sort().join('')\`, O(k log k) per word. Simple and works for any alphabet.
-- **Letter counts:** a 26-slot array joined with a separator, O(k) per word. Faster asymptotically for long words, but relies on a fixed, small alphabet.
-
-**Complexity:** O(n · k log k) or O(n · k) time; O(n · k) space for the keys and groups.
-
-**Edge cases:** empty input → \`[]\`; empty string is its own anagram class (key \`""\` or all zeros); duplicate words stay together; the separator-collision case (\`'a' + 'b'.repeat(11)\` vs \`'a'.repeat(11) + 'b'\`), which a test checks.
-
-**Common follow-ups:**
-- *"Unicode or uppercase input?"* → normalise first (\`toLowerCase()\`, maybe \`normalize('NFC')\`), and use the sorted key or a \`Map<char, count>\` signature, since the 26-slot array no longer fits. Iterate with \`for…of\`/\`[...w]\` to handle surrogate pairs.
-- *"Which key is faster in practice?"* → for short English words, sorting is often just as fast; counts win for long strings. Say you'd measure.
-- *"Find all anagrams of a pattern inside a long text"* → a fixed-size sliding window with letter counts (next pattern!).`,
-};
-
-export const longestUniqueSubstring: Exercise = {
-  id: 'dsa-longest-unique-substring',
-  title: 'Longest substring without repeating characters',
-  runtime: 'logic',
-  difficulty: 'core',
-  estMinutes: 12,
-  tags: ['dsa', 'sliding-window', 'hashing', 'strings'],
-  prompt: `Return the length of the longest **substring** (contiguous) of \`s\` that contains no repeated characters.
+**Recursive vs iterative:** the recursive version is shorter:
 
 \`\`\`ts
-lengthOfLongestSubstring('abcabcbb'); // 3  ("abc")
-lengthOfLongestSubstring('bbbbb');    // 1
-lengthOfLongestSubstring('pwwkew');   // 3  ("wke"; "pwke" is a subsequence, not a substring)
-lengthOfLongestSubstring('');         // 0
+const dfs = (r: number, c: number): void => {
+  if (r < 0 || c < 0 || r >= R || c >= C || grid[r][c] !== '1' || seen[r * C + c]) return;
+  seen[r * C + c] = 1;
+  dfs(r + 1, c); dfs(r - 1, c); dfs(r, c + 1); dfs(r, c - 1);
+};
 \`\`\`
 
-**Constraints:** \`0 ≤ s.length ≤ 5 × 10⁴\`; \`s\` may contain letters, digits, symbols and spaces (treat each UTF-16 code unit as a character).
+…but its depth can reach R·C on a snaking island (90,000 on a 300 × 300 grid), which can overflow the JS call stack. The reference solution uses an **explicit stack**, which is the safe production choice; mention the trade-off either way.
 
-**What the interviewer is looking for:** recognising the sliding-window cues ("longest" + "contiguous" + a property you can maintain incrementally), stating the window invariant, and handling the two classic bugs: throwing away the whole window on a repeat (\`"dvdf"\`), and moving the left edge backwards (\`"abba"\`).
+**Edge cases:** empty grid, all water, all land, single row/column, diagonal-only neighbours (separate islands), U-shaped islands (a naive "check only up and left" scan miscounts these).
 
-**Expected complexity:** O(n) time, O(min(n, alphabet)) space.`,
-  starter: substringStarter,
-  solution: substringSolution,
-  tests: substringTests,
-  hints: [
-    'Brute force checks every substring. Notice that if s[i..j] has no repeats, so does every substring inside it, so you can grow and shrink one window instead of restarting.',
-    'Keep a window [left, right] with the invariant "no duplicates inside". Expand `right` one character at a time. When the new character is already in the window, move `left` just past its previous occurrence.',
-    'Store each character\'s last index in a Map. On a repeat, set `left = Math.max(left, lastIndex + 1)` (or only jump when lastIndex >= left), because an old occurrence outside the window must not drag `left` backwards. Record `right - left + 1` every step.',
-  ],
-  explanation: `**Brute force:** for every start \`i\`, extend \`j\` with a fresh \`Set\` until you hit a repeat. That's O(n · m) where m is the alphabet size (O(n²) for large alphabets), or O(n³) if you check each substring from scratch.
-
-**Bottleneck:** when we hit a repeat starting at \`i\`, we throw away everything we learned and restart at \`i + 1\`, even though \`s[i+1..j-1]\` is already known to be repeat-free.
-
-**Pattern:** variable-size sliding window. **Invariant:** \`s[left..right]\` contains no duplicates.
-
-**Optimal walk-through (\`"abba"\`):**
-
-| right | char | lastSeen before | left | window | best |
-|---|---|---|---|---|---|
-| 0 | a | — | 0 | a | 1 |
-| 1 | b | — | 0 | ab | 2 |
-| 2 | b | b→1 (inside) | 2 | b | 2 |
-| 3 | a | a→0 (**outside**, 0 < left) | 2 | ba | 2 |
-
-At \`right = 3\`, a naive \`left = lastSeen + 1\` would set \`left = 1\` and report \`"bba"\` (length 3): wrong. Only jump when the previous occurrence is inside the window.
-
-The alternative template uses a \`Set\`: expand; \`while (set.has(s[right])) set.delete(s[left++])\`; add; record. Also O(n), because each character enters and leaves at most once.
-
-**Complexity:** O(n) time. Space O(min(n, alphabet)) for the map.
-
-**Edge cases:** empty string → 0; single char → 1; all identical → 1; all unique → n; spaces and symbols are characters too.
-
-**Common follow-ups:**
-- *"Return the substring, not just the length"* → also store \`bestStart\` when \`best\` improves, then \`s.slice(bestStart, bestStart + best)\`.
-- *"At most K distinct characters"* → same template with a \`Map<char, count>\`; shrink while \`map.size > k\`.
-- *"What about emoji?"* → iterate code points (\`[...s]\`), since \`s[i]\` splits surrogate pairs.`,
+**Follow-ups:**
+- *"Max area of an island"* → return the size from each flood fill.
+- *"Islands are added one at a time; report the count after each"* → **Union-Find** (disjoint set) with path compression.
+- *"Count distinct island shapes"* → record the flood-fill path relative to its start.
+- *Frontend version:* flood fill in a paint tool, "select all connected cells" in a spreadsheet, or minesweeper's reveal-empty-area.`,
 };
 
-export const subarraySumK: Exercise = {
-  id: 'dsa-subarray-sum-k',
-  title: 'Subarray sum equals K',
-  runtime: 'logic',
-  difficulty: 'core',
-  estMinutes: 12,
-  tags: ['dsa', 'prefix-sums', 'hashing'],
-  prompt: `Count the **contiguous, non-empty** subarrays whose elements sum to exactly \`k\`.
-
-\`\`\`ts
-subarraySum([1, 1, 1], 2);   // 2   ([1,1] twice: indices 0–1 and 1–2)
-subarraySum([1, 2, 3], 3);   // 2   ([1,2] and [3])
-subarraySum([1, -1, 0], 0);  // 3   ([1,-1], [0], [1,-1,0])
-subarraySum([], 0);          // 0
-\`\`\`
-
-**Constraints:** \`0 ≤ nums.length ≤ 2 × 10⁴\` (the performance test uses 60,000); values in \`[-1000, 1000]\`; \`k\` can be negative.
-
-**What the interviewer is looking for:** explaining why a sliding window **doesn't** work here (negative numbers), turning the range condition into a lookup with prefix sums (\`prefix[i] = prefix[j] − k\`), and remembering the empty prefix.
-
-**Expected complexity:** O(n) time, O(n) space.`,
-  starter: subarrayStarter,
-  solution: subarraySolution,
-  tests: subarrayTests,
-  hints: [
-    'The O(n²) solution fixes a start index and extends a running sum. Why can\'t you shrink a window instead? (Try it on [1, -1, 1].)',
-    'With prefix sums, the sum of nums[i..j-1] is prefix[j] − prefix[i]. Rearrange "that equals k" into a question about an earlier prefix value.',
-    'Keep a running prefix sum and a Map from prefix value to how many times it has occurred, seeded with 0 → 1 (the empty prefix). At each step add `map.get(prefix - k) ?? 0` to the count, then record the current prefix.',
-  ],
-  explanation: `**Brute force:** for each start \`i\`, extend \`j\` and keep a running sum; count when it equals \`k\`. O(n²) time, O(1) space. Fine for n = 10³, too slow for the 60,000-element test.
-
-**Why not a sliding window?** A window needs monotonic validity: growing must only increase the sum. With negatives, adding an element can decrease the sum, so when the sum is too big you can't know whether to shrink or keep expanding.
-
-**Pattern:** prefix sums + hash map (complement lookup on prefixes).
-
-**Derivation:** let \`P[j]\` be the sum of the first \`j\` elements, with \`P[0] = 0\`. Subarray \`(i, j]\` sums to \`k\` ⇔ \`P[j] − P[i] = k\` ⇔ **\`P[i] = P[j] − k\`**. So at each \`j\`, the number of valid subarrays ending there is *how many earlier prefixes equal \`P[j] − k\`*. A \`Map<prefix, count>\` answers that in O(1).
-
-**Walk-through (\`[1, 1, 1]\`, k = 2):** map \`{0:1}\`. Prefix 1: look up −1 → 0; map \`{0:1, 1:1}\`. Prefix 2: look up 0 → 1 (count 1); map gets 2. Prefix 3: look up 1 → 1 (count 2). Answer 2.
-
-**Complexity:** O(n) time, O(n) space (up to n + 1 distinct prefixes).
-
-**Edge cases:** the seed \`0 → 1\` counts subarrays starting at index 0 (\`[2, 2]\`, k = 4); zeros create many equal prefixes (\`[0, 0, 0]\`, k = 0 → 6), which is why we store **counts**, not just presence; the order "look up, then insert" matters when \`k = 0\`, or every prefix would match itself and count an empty subarray.
-
-**Common follow-ups:**
-- *"Return the longest such subarray"* → store the **first** index of each prefix instead of a count; length = \`j − firstIndex[P[j] − k]\`.
-- *"All numbers are positive. Can you use O(1) space?"* → yes, now a sliding window works.
-- *"Subarrays with sum divisible by k"* → key the map by \`((prefix % k) + k) % k\` (JS \`%\` can be negative!).`,
-};
-
-export const reverseLinkedList: Exercise = {
-  id: 'dsa-reverse-linked-list',
-  title: 'Reverse a linked list',
-  runtime: 'logic',
-  difficulty: 'warm-up',
-  estMinutes: 8,
-  tags: ['dsa', 'linked-list', 'pointers'],
-  prompt: `Reverse a singly linked list **in place** and return the new head.
-
-The starter exports a \`ListNode\` class and two helpers the tests use, \`fromArray([1, 2, 3])\` and \`toArray(head)\`. Leave those as they are and implement only \`reverseList\`.
-
-\`\`\`ts
-toArray(reverseList(fromArray([1, 2, 3, 4, 5]))); // [5, 4, 3, 2, 1]
-reverseList(null);                                // null
-\`\`\`
-
-**Constraints:** \`0 ≤ length ≤ 10⁵\`. Re-link the existing nodes; don't allocate new ones. A test reverses a 100,000-node list, so a recursive solution will likely overflow the call stack. An iterative solution is expected.
-
-**What the interviewer is looking for:** pointer discipline. Save \`next\` before overwriting it, return the right node, and leave no cycle behind (the old head's \`next\` must become \`null\`). Draw the pointers and narrate each move.
-
-**Expected complexity:** O(n) time, O(1) extra space.`,
-  starter: reverseStarter,
-  solution: reverseSolution,
-  tests: reverseTests,
-  hints: [
-    'You need to point each node at the one BEFORE it. What do you need to remember so you don\'t lose the rest of the list when you overwrite `node.next`?',
-    'Use three references: `prev` (starts as null), `curr` (starts at head), and a temporary `next` saved at the top of each loop iteration.',
-    'Loop while curr is not null: `const next = curr.next; curr.next = prev; prev = curr; curr = next;`. When the loop ends, `prev` is the new head.',
-  ],
-  explanation: `**Brute force:** copy the values into an array, then write them back in reverse (or build new nodes). O(n) time but O(n) extra space, and it doesn't re-link the nodes, which the interviewer specifically asked for.
-
-**Pattern:** iterative pointer reversal with three pointers. **Invariant:** \`prev\` is the head of the already-reversed part; \`curr\` is the head of the part not yet reversed.
-
-**Walk-through (1 → 2 → 3):**
-
-| step | prev | curr | list state |
-|---|---|---|---|
-| start | null | 1 | 1 → 2 → 3 |
-| 1 | 1 | 2 | null ← 1 2 → 3 |
-| 2 | 2 | 3 | null ← 1 ← 2 3 |
-| 3 | 3 | null | null ← 1 ← 2 ← 3 |
-
-Return \`prev\` (3).
-
-**Complexity:** O(n) time, O(1) extra space.
-
-**Edge cases:** empty list (loop doesn't run, return \`null\`); one node (its \`next\` is set to \`null\`, which it already was); two nodes; very long lists (iterative has no stack-depth limit).
-
-**The recursive version:** \`if (!head || !head.next) return head; const newHead = reverse(head.next); head.next.next = head; head.next = null; return newHead;\` is elegant, but uses O(n) call-stack space, so it overflows on long lists. Mention it, then explain why you'd ship the iterative one.
-
-**Common follow-ups:**
-- *"Reverse only positions m to n"* → dummy head, walk to node m − 1, reverse n − m + 1 nodes with the same loop, then reconnect both ends.
-- *"Reverse in groups of k"* → repeat the sub-list reversal per group; keep a pointer to the previous group's tail.
-- *"Is a linked list a palindrome, in O(1) space?"* → find the middle with fast/slow pointers, reverse the second half, compare, (optionally) restore.`,
-};
-
-export const searchInsert: Exercise = {
-  id: 'dsa-search-insert',
-  title: 'Search insert position (lower bound)',
+export const shortestPath: Exercise = {
+  id: 'dsa-shortest-path',
+  title: 'Shortest path in an unweighted graph (BFS)',
   runtime: 'logic',
   difficulty: 'core',
   estMinutes: 10,
-  tags: ['dsa', 'binary-search'],
-  prompt: `\`nums\` is sorted ascending and **may contain duplicates**. Return the **first** index \`i\` where \`nums[i] >= target\`: the index of the first occurrence of \`target\` if it's present, or where it would be inserted to keep the array sorted. Return \`nums.length\` if every element is smaller.
+  tags: ['dsa', 'graphs', 'bfs', 'adjacency list', 'shortest path'],
+  prompt: `An **undirected, unweighted** graph has nodes \`0..n-1\` and an edge list. Return the number of edges on the **shortest** path from \`start\` to \`target\`, \`0\` if they are the same node, or \`-1\` if \`target\` is unreachable.
 
 \`\`\`ts
-searchInsert([1, 3, 5, 6], 5);       // 2
-searchInsert([1, 3, 5, 6], 2);       // 1
-searchInsert([1, 3, 5, 6], 7);       // 4
-searchInsert([1, 2, 2, 2, 3], 2);    // 1  (the FIRST 2)
-searchInsert([], 3);                 // 0
+shortestPath(5, [[0, 1], [1, 2], [0, 3], [3, 4], [4, 2]], 0, 2); // 2  (0 → 1 → 2)
+shortestPath(4, [[0, 1], [2, 3]], 0, 3);                          // -1 (disconnected)
+shortestPath(1, [], 0, 0);                                        // 0
 \`\`\`
 
-**Constraints:** \`0 ≤ nums.length ≤ 10⁶\`. One test wraps a 1,000,000-element array in a \`Proxy\` and counts how many elements you read: a linear scan reads hundreds of thousands, binary search about 20.
+**Constraints:** up to ~10⁵ nodes and edges. Edges may be duplicated, may be self-loops, and the graph may contain cycles. One test uses a 20,000-node path and must finish in under 300 ms.
 
-**What the interviewer is looking for:** a binary search with a clearly stated invariant, correct boundaries (empty array, insert at the very end), and no infinite loop. Duplicates are the trap: returning as soon as \`nums[mid] === target\` finds *a* match, not the first.
+**What the interviewer is looking for:** building an **adjacency list once** from the edge list, choosing **BFS** (not DFS) *because* every edge has the same weight, a visited set marked on enqueue, and early exit. Naming Dijkstra as the answer for weighted graphs is a bonus.
 
-**Expected complexity:** O(log n) time, O(1) space.`,
-  starter: searchStarter,
-  solution: searchSolution,
-  tests: searchTests,
+**Expected complexity:** O(V + E) time and space.`,
+  starter: shortestPathStarter,
+  solution: shortestPathSolution,
+  tests: shortestPathTests,
   hints: [
-    'Think of the array as a sequence of booleans: `nums[i] >= target` is false, false, …, then true, true. You are looking for the first true.',
-    'Use a half-open range: `lo = 0`, `hi = nums.length`, loop `while (lo < hi)`. Invariant: everything before `lo` is < target, everything from `hi` on is >= target.',
-    'If `nums[mid] < target`, mid can\'t be the answer: `lo = mid + 1`. Otherwise mid might be the answer: `hi = mid` (not mid - 1). Return `lo` when the loop ends.',
+    'Turn the edge list into `adj: number[][]` first. Undirected means each edge goes into both lists.',
+    'BFS explores nodes in order of distance from the start: everything 1 edge away, then 2, then 3… The first time you reach the target is therefore the shortest path.',
+    'Keep `dist = new Array(n).fill(-1)`; set `dist[start] = 0`; when you enqueue a neighbour with `dist === -1`, set `dist[next] = dist[node] + 1`. Use a head index instead of `shift()`.',
   ],
-  explanation: `**Brute force:** scan left to right and return the first \`i\` with \`nums[i] >= target\`. O(n). Fine for small inputs, but it ignores the fact that the input is sorted, which is the biggest hint in the problem.
+  explanation: `**Brute force:** DFS over every simple path and keep the minimum length — exponential in the worst case. A subtler slow version is BFS that finds each node's neighbours by **scanning the whole edge list** (\`edges.filter(...)\`) every time it dequeues: O(V·E), which takes over a second on the 20,000-node test.
 
-**Bottleneck:** each comparison in a linear scan rules out one element. In a sorted array, one comparison at the middle rules out **half** of the remaining range.
+**Bottleneck → pattern:** (1) neighbour lookup must be O(degree), so build an adjacency list once; (2) "fewest edges" in an *unweighted* graph is exactly what **BFS** computes, because it expands in rings of equal distance.
 
-**Pattern:** binary search for a boundary (lower bound) using the half-open template.
+**Why not DFS?** DFS reaches the target by *some* path — in the "long way round" test it would find 0-1-2-3-4-5 (5 edges) before 0-6-5 (2 edges). To make DFS correct you'd have to explore every path.
 
-**Optimal:** \`lo = 0, hi = nums.length\`. While \`lo < hi\`: \`mid = lo + Math.floor((hi − lo) / 2)\`; if \`nums[mid] < target\` then \`lo = mid + 1\`, else \`hi = mid\`. Return \`lo\`.
+**Walk-through** on the example: adj = \`0:[1,3] 1:[0,2] 2:[1,4] 3:[0,4] 4:[3,2]\`. Queue \`[0]\` (dist 0) → enqueue 1, 3 (dist 1) → from 1 enqueue 2 (dist 2) = target → return 2.
 
-**Why it's correct:** the invariant (left of \`lo\` → too small, from \`hi\` on → big enough) holds initially (both regions are empty) and after each update. The range \`[lo, hi)\` strictly shrinks because \`lo ≤ mid < hi\`. When \`lo === hi\`, that index is exactly the boundary.
+**Complexity:** O(V + E) time: each node is enqueued once and each adjacency list is scanned once. O(V + E) space for the adjacency list, \`dist\` and the queue.
 
-**Walk-through (\`[1, 2, 2, 2, 3]\`, target 2):** lo 0, hi 5 → mid 2 (2 ≥ 2) → hi 2 → mid 1 (2 ≥ 2) → hi 1 → mid 0 (1 < 2) → lo 1. Return 1, the first 2.
+**Edge cases:** \`start === target\` (0, even with no edges), disconnected target (-1), cycles, self-loops and duplicate edges (the visited check makes them harmless).
 
-**Complexity:** O(log n) time (~20 iterations for 10⁶), O(1) space.
-
-**Edge cases:** empty array → 0 (the loop never runs); target smaller than everything → 0; bigger than everything → \`nums.length\`; all duplicates; negatives.
-
-**Common follow-ups:**
-- *"Find the first and last position of target"* → \`first = lowerBound(t)\`; \`last = lowerBound(t + 1) − 1\` for integers, or write \`upperBound\` with \`<=\`. Check \`first < length && nums[first] === t\`.
-- *"Search in a rotated sorted array"* → at each step, one half is sorted. Decide whether target lies in it.
-- *"Minimum capacity / speed / time such that…"* → the same template over the **answer space**, with a monotonic \`feasible(x)\` predicate instead of \`nums[mid] >= target\`.
-- *"Why \`lo + (hi − lo) / 2\`?"* → in languages with fixed-size ints, \`lo + hi\` can overflow. In JS it's a habit worth showing, not a real bug at these sizes.`,
+**Follow-ups:**
+- *"Return the path itself"* → store \`parent[next] = node\` on enqueue, then walk back from the target.
+- *"Edges have weights"* → Dijkstra with a min-heap (O((V + E) log V)); weights 0/1 → 0-1 BFS with a deque.
+- *"Very large graph, start and target both known"* → bidirectional BFS roughly halves the explored radius.
+- *"Directed graph?"* → push only \`adj[a].push(b)\`.
+- *Frontend version:* "degrees of separation" in a social graph, the minimum number of route changes between two screens, or the shortest navigation path between two nodes in a component tree.`,
 };
 
-export const dailyTemperatures: Exercise = {
-  id: 'dsa-daily-temperatures',
-  title: 'Daily temperatures (monotonic stack)',
+export const topKFrequent: Exercise = {
+  id: 'dsa-top-k-frequent',
+  title: 'Top-k frequent elements (bucket sort / heap)',
+  runtime: 'logic',
+  difficulty: 'core',
+  estMinutes: 10,
+  tags: ['dsa', 'hashing', 'heap', 'bucket sort', 'top-k'],
+  prompt: `Return the \`k\` most frequent values in \`nums\`, **in any order**. The answer is guaranteed to be unique (no ties at the k-th place) and \`1 ≤ k ≤\` the number of distinct values.
+
+\`\`\`ts
+topKFrequent([1, 1, 1, 2, 2, 3], 2); // [1, 2] (or [2, 1])
+topKFrequent([7], 1);                // [7]
+\`\`\`
+
+**Constraints:** up to 10⁵ values; values can be negative. Do not mutate \`nums\`. Aim for **better than O(n log n)**.
+
+**What the interviewer is looking for:** a frequency \`Map\` first (hashing), then a *selection* step — and a comparison of the three options: sort all unique values (O(u log u)), a **size-k min-heap** (O(u log k)), or **bucket sort by frequency** (O(n)). Explaining *why* each is that cost matters more than which one you code.
+
+**Expected complexity:** O(n) with buckets, or O(n log k) with a heap; O(n) space.`,
+  starter: topKStarter,
+  solution: topKSolution,
+  tests: topKTests,
+  hints: [
+    'Step 1 is always the same: count occurrences in a `Map<number, number>`.',
+    'Sorting the entries by count works (O(u log u)). To beat it, notice that a frequency is an integer between 1 and n.',
+    'Make `buckets: number[][]` of length n + 1 where `buckets[f]` holds values seen exactly f times, then walk f from n down to 1, collecting values until you have k.',
+  ],
+  explanation: `**Brute force:** for every distinct value, count it by scanning the array (O(n·u)), then sort. The first fix is the frequency \`Map\` — O(n), one pass.
+
+**Then the selection step — know all three:**
+
+| Approach | Time | When to pick it |
+|---|---|---|
+| Sort entries by count | O(n + u log u) | Simplest to write; fine for UI-sized data. Say it first. |
+| Min-heap of size k | O(n + u log k) | k ≪ u, or the data is a **stream** (you can't bucket an unbounded stream) |
+| Bucket sort by frequency | O(n) | Counts are bounded by n — the classic "optimal" answer |
+
+**Pattern:** hashing + **top-k selection**. The heap trick: keep a *min*-heap of the k best seen so far; when a new candidate beats the smallest (the heap's top), pop and push. The heap never grows beyond k, so each operation is O(log k).
+
+\`\`\`ts
+const heap = new MinHeap<[number, number]>((a, b) => a[1] - b[1]); // [value, count]
+for (const entry of counts) {
+  heap.push(entry);
+  if (heap.size > k) heap.pop(); // drop the least frequent
+}
+\`\`\`
+
+(JavaScript has no built-in heap — the lesson shows a 30-line \`MinHeap\`. In an interview, ask whether you may assume one exists.)
+
+**Walk-through (buckets)** on \`[1,1,1,2,2,3], k = 2\`: counts \`{1:3, 2:2, 3:1}\` → \`buckets[3]=[1], buckets[2]=[2], buckets[1]=[3]\` → walk down from 6: collect 1, then 2 → done.
+
+**Complexity:** O(n) time and space for buckets (n + 1 buckets, u values placed once).
+
+**Edge cases:** k = number of distinct values, negative numbers, a single element, don't sort \`nums\` in place.
+
+**Follow-ups:**
+- *"Ties — return the smaller value first"* → sort within each bucket, or compare \`[count, -value]\` in the heap.
+- *"It's a live stream of search queries"* → heap of size k over a running count map; for huge streams, approximate (Count-Min Sketch).
+- *"Top k closest points / k largest numbers"* → same size-k heap idea, or Quickselect for average O(n).
+- *Frontend version:* "most used emoji" picker, "top 5 tags" sidebar, trending searches in an autocomplete.`,
+};
+
+export const subsets: Exercise = {
+  id: 'dsa-subsets',
+  title: 'Subsets (backtracking)',
+  runtime: 'logic',
+  difficulty: 'core',
+  estMinutes: 10,
+  tags: ['dsa', 'backtracking', 'recursion'],
+  prompt: `Given an array of **distinct** integers, return **all subsets** (the power set) without duplicates. Subsets may come back in any order, and values inside a subset may be in any order — the tests normalise before comparing.
+
+\`\`\`ts
+subsets([1, 2, 3]);
+// [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]   (any order)
+subsets([]); // [[]]  — the empty set has exactly one subset
+\`\`\`
+
+**Constraints:** \`0 ≤ nums.length ≤ 12\`. Do not mutate \`nums\`.
+
+**What the interviewer is looking for:** the backtracking template — **choose → explore → unchoose** — with a \`start\` index so \`[1, 2]\` and \`[2, 1]\` aren't both generated, **copying** the path when recording it (the #1 bug), and the complexity argument: 2ⁿ subsets, each up to n long.
+
+**Expected complexity:** O(n · 2ⁿ) time and output space; O(n) extra space for the recursion and path.`,
+  starter: subsetsStarter,
+  solution: subsetsSolution,
+  tests: subsetsTests,
+  hints: [
+    'Think of a decision tree: for each element, either include it or skip it. Every path through the tree is a subset.',
+    'Use a shared `path: number[]` and a recursive `backtrack(start)`. Record the current path, then for each `i` from `start` onward: push `nums[i]`, recurse with `i + 1`, pop.',
+    'Record `[...path]`, not `path` — otherwise every entry in the result is the same array, which ends up empty after the last pop.',
+  ],
+  explanation: `**Brute force / alternative:** iterate the bitmasks \`0 .. 2ⁿ - 1\`; bit i set → include \`nums[i]\`. Same O(n · 2ⁿ) — the output itself is that big, so no algorithm can be faster. Another clean option is iterative doubling: start with \`[[]]\` and for each number add a copy of every existing subset with that number appended.
+
+**Pattern:** **backtracking** — DFS over a decision tree with a single mutable \`path\`:
+
+\`\`\`ts
+function backtrack(start: number) {
+  result.push([...path]);            // every node is an answer for subsets
+  for (let i = start; i < nums.length; i++) {
+    path.push(nums[i]);              // choose
+    backtrack(i + 1);                // explore
+    path.pop();                      // unchoose
+  }
+}
+\`\`\`
+
+**Why \`start\`?** It forces elements to be picked in index order, so each combination appears exactly once. For **permutations** order matters, so you loop over *all* indices and skip used ones with a \`used\` boolean array instead.
+
+**Walk-through** on \`[1, 2, 3]\`: record \`[]\` → choose 1: record \`[1]\` → choose 2: record \`[1,2]\` → choose 3: record \`[1,2,3]\`, pop, pop → choose 3: \`[1,3]\` … → back at root, choose 2: \`[2]\`, \`[2,3]\` → choose 3: \`[3]\`. Eight subsets.
+
+**Complexity:** 2ⁿ subsets × O(n) copy = O(n · 2ⁿ) time; recursion depth ≤ n.
+
+**Edge cases:** empty input → \`[[]]\`; recording the path by reference (all results become \`[]\`); not mutating the input (don't sort it in place).
+
+**Follow-ups:**
+- *"Input has duplicates"* (Subsets II) → sort a copy first, and skip \`nums[i]\` when \`i > start && nums[i] === nums[i - 1]\`.
+- *"Permutations"* → \`used[]\` array, loop over all i, record only when \`path.length === n\`; O(n · n!).
+- *"Combination sum (reuse allowed, hit a target)"* → recurse with \`i\` instead of \`i + 1\`, and **prune** when the running sum exceeds the target (sort first so you can \`break\`).
+- *Frontend version:* generating every combination of filters/feature flags for a test matrix, or all variant combinations (size × colour) for a product picker.`,
+};
+
+export const coinChange: Exercise = {
+  id: 'dsa-coin-change',
+  title: 'Coin change: minimum coins (DP)',
   runtime: 'logic',
   difficulty: 'stretch',
   estMinutes: 12,
-  tags: ['dsa', 'monotonic-stack', 'stack'],
-  prompt: `Given daily temperatures, return an array where \`answer[i]\` is the number of days after day \`i\` until a **strictly warmer** temperature, or \`0\` if none comes.
+  tags: ['dsa', 'dynamic programming', 'memoization'],
+  prompt: `Given coin denominations (positive integers, unlimited supply of each) and an \`amount\`, return the **fewest coins** that add up to \`amount\`, or \`-1\` if it can't be made. \`amount = 0\` needs \`0\` coins.
 
 \`\`\`ts
-dailyTemperatures([73, 74, 75, 71, 69, 72, 76, 73]); // [1, 1, 4, 2, 1, 1, 0, 0]
-dailyTemperatures([30, 40, 50, 60]);                 // [1, 1, 1, 0]
-dailyTemperatures([70, 70, 70]);                     // [0, 0, 0]  (equal is not warmer)
+coinChange([1, 2, 5], 11); // 3   (5 + 5 + 1)
+coinChange([2], 3);        // -1
+coinChange([1, 3, 4], 6);  // 2   (3 + 3) — greedy "largest coin first" says 3 (4 + 1 + 1)
 \`\`\`
 
-**Constraints:** \`0 ≤ temps.length ≤ 10⁵\`; temperatures may be negative. Don't mutate the input. A 50,000-day strictly decreasing input (the worst case for brute force) must finish in under 300 ms.
+**Constraints:** \`1 ≤ coins.length ≤ 12\`, \`0 ≤ amount ≤ 10⁴\`. One test (\`[1, 2, 5]\`, 35) must finish in under 300 ms — plain recursion without caching takes seconds there.
 
-**What the interviewer is looking for:** recognising "next greater element" and reaching for a monotonic stack, explaining what the stack holds ("days still waiting for a warmer day"), and justifying O(n) with the push-once/pop-once argument.
+**What the interviewer is looking for:** rejecting greedy with a counterexample, then the DP recipe out loud — **state** (\`dp[a]\` = fewest coins for amount a), **transition** (\`min over coins of dp[a - c] + 1\`), **base case** (\`dp[0] = 0\`), **answer** (\`dp[amount]\`, or -1 if still Infinity) — and the complexity O(amount × coins).
 
-**Expected complexity:** O(n) time, O(n) space.`,
-  starter: tempsStarter,
-  solution: tempsSolution,
-  tests: tempsTests,
+**Expected complexity:** O(amount · coins) time, O(amount) space.`,
+  starter: coinChangeStarter,
+  solution: coinChangeSolution,
+  tests: coinChangeTests,
   hints: [
-    'Brute force scans right from each day until it finds a warmer one: O(n²) on a decreasing sequence. Flip the question: when a warm day arrives, which earlier days does it answer?',
-    'Keep a stack of INDICES of days that haven\'t found a warmer day yet. Their temperatures are non-increasing from bottom to top. Why must that be true?',
-    'For each day i: while the stack is non-empty and temps[top] < temps[i], pop j and set answer[j] = i - j. Then push i. Days left on the stack keep 0.',
+    'Greedy fails on `[1, 3, 4]`, 6. Instead ask: "if the LAST coin I use is c, what is left to solve?"',
+    'That gives a recurrence: `best(a) = 1 + min(best(a - c))` over coins c ≤ a, with `best(0) = 0`. The same sub-amounts are solved again and again — cache them (memo) or fill a table.',
+    'Bottom-up: `dp = new Array(amount + 1).fill(Infinity); dp[0] = 0;` then for a from 1 to amount, for each coin c ≤ a, `dp[a] = Math.min(dp[a], dp[a - c] + 1)`. Return `dp[amount] === Infinity ? -1 : dp[amount]`.',
   ],
-  explanation: `**Brute force:** for each \`i\`, scan \`j = i + 1…\` until \`temps[j] > temps[i]\`. O(n²) in the worst case (strictly decreasing temperatures: every scan runs to the end).
+  explanation: `**Brute force:** try every combination recursively — \`best(a) = 1 + min over c of best(a - c)\`. Correct, but exponential: with \`[1, 2, 5]\` the call count grows about 1.7× per extra unit of amount, so amount 35 makes tens of millions of calls.
 
-**Bottleneck:** cold days get re-scanned again and again. A single warm day answers *many* earlier days at once, and the brute force doesn't exploit that.
+**Bottleneck:** **overlapping subproblems** — \`best(30)\` is reached via 5, via 2+2+1, via 1+1+1+2… and recomputed every time. And the problem has **optimal substructure**: the best way to make \`a\` is one coin plus the best way to make the remainder. Those two properties = dynamic programming.
 
-**Pattern:** monotonic (non-increasing) stack of unresolved indices.
+**Pattern:** DP. Two equivalent implementations:
 
-**Walk-through (\`[73, 74, 75, 71, 69, 72, 76, 73]\`):**
-- 73 → push 0. 74 > 73 → pop 0 (answer 1), push 1. 75 → pop 1 (1), push 2.
-- 71, 69 → push 3, 4 (stack temps: 75, 71, 69, non-increasing).
-- 72 → pops 4 (69, answer 1) and 3 (71, answer 2); 75 isn't colder, so stop; push 5.
-- 76 → pops 5 (answer 1) and 2 (answer 4); push 6. 73 → push 7. End: 6 and 7 stay 0.
+\`\`\`ts
+// Top-down: the brute force + a cache (memoization)
+const memo = new Map<number, number>();
+function best(a: number): number {
+  if (a === 0) return 0;
+  if (a < 0) return Infinity;
+  if (memo.has(a)) return memo.get(a)!;
+  let res = Infinity;
+  for (const c of coins) res = Math.min(res, best(a - c) + 1);
+  memo.set(a, res);
+  return res;
+}
+\`\`\`
 
-**Why O(n):** each index is pushed exactly once and popped at most once, so the inner \`while\` runs at most n times *in total*. Amortised O(1) per day.
+Bottom-up (the reference solution) fills \`dp[0..amount]\` in increasing order so every \`dp[a - c]\` is ready when needed — no recursion, so no stack-depth risk at amount 10⁴ with a 1-coin.
 
-**Complexity:** O(n) time, O(n) space (the stack holds up to n indices on a decreasing input).
+**Walk-through** for \`[1, 2, 5]\`: \`dp[0]=0, dp[1]=1, dp[2]=1, dp[3]=2, dp[4]=2, dp[5]=1, dp[6]=2, … dp[10]=2, dp[11]=min(dp[10], dp[9], dp[6]) + 1 = 3\`.
 
-**Edge cases:** empty input → \`[]\`; equal temperatures (use \`<\`, not \`<=\`, when popping, so equal days aren't "warmer"); decreasing input → all zeros; negatives work unchanged.
+**Complexity:** O(amount · coins) time, O(amount) space.
 
-**Common follow-ups:**
-- *"Next greater element in a circular array"* → loop \`2n\` times using \`i % n\`, only pushing during the first pass.
-- *"Previous smaller element / stock span"* → same idea, different comparison or direction.
-- *"Largest rectangle in a histogram"* → monotonic increasing stack; each pop computes the widest rectangle for that bar.
-- *"Can you do it with O(1) extra space besides the output?"* → yes: iterate from the right and jump using the answers you've already computed (\`j += answer[j]\`). Still amortised O(n).`,
+**Edge cases:** amount 0 → 0; impossible amounts → -1 (keep \`Infinity\` as "impossible" and convert at the end — don't let \`-1\` leak into a \`min\`); coins larger than the amount; unsorted coins.
+
+**Follow-ups:**
+- *"Count the number of ways"* (Coin Change II) → \`ways[a] += ways[a - c]\`, with the **coin loop outside** so combinations aren't counted once per ordering.
+- *"Return which coins"* → store the coin that achieved each \`dp[a]\` and walk back.
+- *"Why not BFS?"* → you can! Amounts are nodes, coins are edges, fewest coins = shortest path. Same O(amount · coins). Great answer to show pattern fluency.
+- *"When is greedy correct?"* → for "canonical" systems like real currencies (1, 2, 5, 10…), but not in general.`,
 };

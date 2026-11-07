@@ -1,270 +1,251 @@
 import type { QuizQuestion } from '../../types';
 
-// ---------------------------------------------------------------------------
-// Inline lesson checks
-// ---------------------------------------------------------------------------
-
-export const frameworkChecks: QuizQuestion[] = [
+export const treeChecks: QuizQuestion[] = [
   {
-    id: 'amortised-while',
-    prompt: 'What is the time complexity of this function, where n = `nums.length`?',
-    code: `function f(nums: number[]): number {
-  const stack: number[] = [];
-  let pops = 0;
-  for (const x of nums) {
-    while (stack.length > 0 && stack[stack.length - 1] < x) {
-      stack.pop();
-      pops++;
-    }
-    stack.push(x);
-  }
-  return pops;
-}`,
-    codeLang: 'ts',
-    choices: ['O(n²): there is a loop inside a loop', 'O(n): each element is pushed once and popped at most once', 'O(n log n)', 'O(1) amortised'],
-    answer: 1,
+    id: 'dsa2-which-dfs-order',
+    prompt: 'You must compute the **total size of every folder** in a file-tree (a folder\'s size is the sum of everything inside it). Which DFS order fits naturally?',
+    choices: ['Pre-order (node before children)', 'In-order (left, node, right)', 'Post-order (children before node)', 'Level-order (BFS)'],
+    answer: 2,
     explanation:
-      'This is the amortised argument. Every element is pushed exactly once, and an element can only be popped if it was pushed, so the `while` loop runs **at most n times in total** across the whole function, not n times per outer iteration. Total work is O(n + n) = O(n). "Loop inside a loop means O(n²)" is the trap: always ask how many times the inner body can run *in total*. "O(1) amortised" describes a single operation (one push or pop), not the whole function.',
+      'A folder\'s size depends on its children\'s sizes, so the children must be finished **first** — post-order: recurse into every child, then combine at the node. Pre-order is for passing information *down* (e.g. the current path). In-order only has meaning for binary trees (sorted output for a BST) — a folder has many children. BFS visits a folder before its contents, the opposite of what you need.',
   },
   {
-    id: 'sort-default',
-    prompt: 'What does this log?',
-    code: `console.log([10, 9, 1, 100].sort());`,
+    id: 'dsa2-bst-trap',
+    prompt: 'What does this (flawed) BST check return for the tree `5 → (1, 6 → (3, 7))`, and is that correct?',
+    code: `class TreeNode {
+  constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+}
+function looksLikeBST(n: TreeNode | null): boolean {
+  if (!n) return true;
+  if (n.left && n.left.val >= n.val) return false;
+  if (n.right && n.right.val <= n.val) return false;
+  return looksLikeBST(n.left) && looksLikeBST(n.right);
+}
+const root = new TreeNode(5, new TreeNode(1), new TreeNode(6, new TreeNode(3), new TreeNode(7)));
+console.log(looksLikeBST(root));`,
     codeLang: 'ts',
     runnable: true,
-    choices: ['[1, 9, 10, 100]', '[1, 10, 100, 9]', '[100, 10, 9, 1]', '[10, 9, 1, 100]'],
+    choices: [
+      '`true` — and correct, every parent/child pair is ordered',
+      '`true` — but wrong: 3 sits in 5\'s right subtree, so it must be greater than 5',
+      '`false` — it detects the problem at node 6',
+      'It throws, because 3 < 6 on the left side',
+    ],
     answer: 1,
     explanation:
-      'Without a comparator, `Array.prototype.sort` converts elements to **strings** and compares UTF-16 code units, so `"100"` < `"9"` because `"1"` < `"9"`. For numbers always pass `(a, b) => a - b`. It also sorts **in place** (use `toSorted` for a copy) and is O(n log n). `[1, 9, 10, 100]` is what people expect, which is exactly why interviewers ask.',
+      'Each node is only compared with its **direct** children: 1 < 5, 6 > 5, 3 < 6, 7 > 6 — all fine, so it returns `true`. But the BST property is about **whole subtrees**: everything right of 5 must be > 5, and 3 is not. Fix: pass `(low, high)` bounds down the recursion (going left sets `high = node.val`, going right sets `low = node.val`), or do an in-order traversal and check the values strictly increase.',
   },
 ];
 
-export const arraysChecks: QuizQuestion[] = [
+export const graphChecks: QuizQuestion[] = [
   {
-    id: 'two-pointer-sorted',
-    prompt:
-      'The array is **sorted ascending** and you must find two values that sum to `target` using **O(1) extra space**. `nums[left] + nums[right]` is smaller than the target. What do you do?',
+    id: 'dsa2-bfs-vs-dfs-shortest',
+    prompt: 'You need the **fewest clicks** to get from one page of a site to another (pages are nodes, links are edges, every click costs the same). Which algorithm, and why?',
     choices: [
-      'Decrement `right`, because the sum must change',
-      'Increment `left`: no pair using `nums[left]` can reach the target, because `nums[right]` is the largest value left',
-      'Restart with `left = 0` and a smaller `right`',
-      'Switch to a hash map, because two pointers can only find exact matches by luck',
+      'DFS — it finds a path faster because it goes deep immediately',
+      'BFS — it explores in order of distance, so the first time it reaches the target is a shortest path',
+      'Dijkstra — shortest paths always need Dijkstra',
+      'Topological sort — links define an order',
     ],
     answer: 1,
     explanation:
-      '`nums[right]` is the largest remaining value, so if even `nums[left] + nums[right]` is too small, `nums[left]` can\'t be part of any answer: discard it with `left++`. Decrementing `right` would make the sum *smaller*, moving away from the target. Restarting makes it O(n²). A hash map works but uses O(n) space, which the question forbids. The correctness argument ("each step safely discards one candidate") is what interviewers want to hear.',
+      'With equal edge weights, BFS expands everything 1 click away, then 2, then 3…, so the first arrival at the target uses the fewest edges, in O(V + E). DFS finds *a* path, not the shortest one, unless it explores every path (exponential). Dijkstra is correct but unnecessary — it is BFS generalised to weighted edges, with an extra log factor from the heap. Topological sort needs a DAG, and websites have cycles.',
   },
   {
-    id: 'pattern-cue-window',
-    prompt:
-      '"Given an array of **positive** integers and a number S, return the length of the **shortest contiguous subarray** whose sum is ≥ S." Which approach is the best fit?',
+    id: 'dsa2-heap-topk',
+    prompt: 'You process a stream of 10 million scores and must show the **top 10** at any time. What is the best structure, and its total cost?',
     choices: [
-      'Sort the array, then use two pointers',
-      'Variable-size sliding window: expand right; while the sum is ≥ S, record the length and shrink from the left',
-      'Hash map of values to indices',
-      'Binary search for S in the array',
+      'Keep all scores and sort at the end: O(n log n) time, O(n) space',
+      'A max-heap of all scores: O(n log n) time, O(n) space',
+      'A min-heap capped at 10 items: O(n log 10) ≈ O(n) time, O(10) space',
+      'A sorted array of 10 with binary search insertion: O(n²)',
     ],
-    answer: 1,
+    answer: 2,
     explanation:
-      '"Contiguous subarray" plus "shortest/longest" plus **positive** numbers is the textbook sliding-window cue. With positive numbers, growing the window only increases the sum and shrinking only decreases it, so the window is monotonic and O(n) works. **Sorting** destroys contiguity, so the answer would be about a different array. A **hash map** is useful for "sum equals exactly K" with negatives (prefix sums), not "≥ S, shortest". Binary searching for S in the array answers a different question.',
+      'Keep a **min**-heap of the best 10 so far. Its root is the weakest of the top 10 — exactly the one to evict when a better score arrives. Each push/pop is O(log k) with k = 10, so the total is O(n log k) time and O(k) space, and it works on a stream. Sorting everything needs all the data in memory. A max-heap of everything also stores n items. A sorted array of 10 is actually fine too (O(n · k) with tiny k) — but it is not O(n²); the heap is the answer that scales when k grows.',
   },
 ];
 
-export const structuresChecks: QuizQuestion[] = [
+export const dpChecks: QuizQuestion[] = [
   {
-    id: 'fast-slow-cycle',
-    prompt: 'Why does Floyd\'s fast/slow pointer algorithm detect a cycle using O(1) extra space?',
-    choices: [
-      'It stores visited nodes in a WeakSet, which doesn\'t count as memory',
-      'Inside a cycle, the fast pointer gains one node per step on the slow one, so it must eventually land on the same node; without a cycle it reaches null',
-      'It compares node values, and repeated values imply a cycle',
-      'It reverses the list as it goes and checks whether it returns to the head',
-    ],
+    id: 'dsa2-backtracking-copy',
+    prompt: 'What does this print?',
+    code: `const result: number[][] = [];
+const path: number[] = [];
+function backtrack(start: number, nums: number[]) {
+  result.push(path); // note: no copy
+  for (let i = start; i < nums.length; i++) {
+    path.push(nums[i]);
+    backtrack(i + 1, nums);
+    path.pop();
+  }
+}
+backtrack(0, [1, 2]);
+console.log(JSON.stringify(result));`,
+    codeLang: 'ts',
+    runnable: true,
+    choices: ['[[],[1],[1,2],[2]]', '[[],[],[],[]]', '[[1,2],[1,2],[1,2],[1,2]]', '[[]]'],
     answer: 1,
     explanation:
-      'Once both pointers are in the cycle, the gap between them shrinks by exactly one each step (fast moves 2, slow moves 1), so it can\'t "jump over" slow: they meet within one lap. Only two pointers are stored, so it\'s O(1) space. A visited **Set/WeakSet** works but is O(n) space. Comparing **values** is wrong because lists can contain duplicate values without any cycle; you must compare node references. Reversing in place does work as a trick, but it mutates the list, and it isn\'t Floyd\'s algorithm.',
+      '`result.push(path)` stores **the same array reference** four times. Every `push` is undone by a `pop`, so when the search ends `path` is empty — and all four entries point at it. You get the right *number* of results with the wrong contents. Always record a snapshot: `result.push([...path])`.',
   },
   {
-    id: 'binary-search-answer',
-    prompt:
-      '"Koko can eat bananas at speed k per hour. Given pile sizes (up to 10⁹ each) and h hours, find the minimum k that lets her finish." What makes binary search applicable?',
+    id: 'dsa2-house-robber-recurrence',
+    prompt: 'House robber: you can\'t rob two adjacent houses. With `dp[i]` = the most money from houses `0..i`, which recurrence is correct?',
     choices: [
-      'The piles array is sorted',
-      'The predicate "can finish at speed k" is monotonic: if speed k works, every faster speed works too',
-      'Binary search applies to any problem asking for a minimum',
-      'The number of piles is a power of two',
+      '`dp[i] = dp[i - 1] + nums[i]`',
+      '`dp[i] = max(dp[i - 1], dp[i - 2] + nums[i])`',
+      '`dp[i] = max(dp[i - 2], dp[i - 1] + nums[i])`',
+      '`dp[i] = dp[i - 2] + nums[i]`',
     ],
     answer: 1,
     explanation:
-      'Binary search needs a **monotonic predicate** (false…false, true…true), not necessarily a sorted array. Here the search space is the *answer* k in `[1, max(pile)]`, and `canFinish(k)` is monotonic, so you find the first k where it becomes true in O(n · log(max pile)). The piles don\'t need to be sorted at all. "Any minimum" is too strong: without monotonicity (e.g. a function with several local minima) binary search can skip the answer. Powers of two are irrelevant.',
+      'Ask "what was the last choice?" Either you **skip** house i (best is `dp[i - 1]`) or you **rob** it, which forbids house i − 1, so you add `nums[i]` to `dp[i - 2]`. Take the max. Option 1 robs adjacent houses. Option 3 adds `nums[i]` to `dp[i - 1]`, which may already include house i − 1. Option 4 forces robbing every other house, which loses on `[2, 1, 1, 2]` (answer 4: both ends).',
   },
 ];
-
-// ---------------------------------------------------------------------------
-// Quiz block: complexity analysis & pattern recognition
-// ---------------------------------------------------------------------------
 
 export const quizQuestions: QuizQuestion[] = [
   {
-    id: 'hidden-includes',
-    prompt: 'What is the time complexity of `dedupe`, where n = `items.length`?',
-    code: `function dedupe(items: string[]): string[] {
-  const out: string[] = [];
-  for (const item of items) {
-    if (!out.includes(item)) out.push(item);
-  }
-  return out;
-}`,
-    codeLang: 'ts',
-    choices: ['O(n)', 'O(n log n)', 'O(n²)', 'O(1)'],
-    answer: 2,
-    explanation:
-      '`out.includes` is a **linear scan**, hidden inside the loop. In the worst case (all unique) `out` grows to n, so the total work is 1 + 2 + … + n = O(n²). The fix is a `Set` (`[...new Set(items)]` keeps first-occurrence order) for O(n) average. O(n) is the answer people give when they only count visible loops.',
-  },
-  {
-    id: 'doubling-loop',
-    prompt: 'What is the time complexity of this loop?',
-    code: `let steps = 0;
-for (let i = 1; i < n; i *= 2) {
-  for (let j = 0; j < n; j++) steps++;
-}`,
-    codeLang: 'ts',
-    choices: ['O(n²)', 'O(n log n)', 'O(log n)', 'O(n)'],
-    answer: 1,
-    explanation:
-      'The outer loop doubles `i`, so it runs about log₂ n times. The inner loop is a full O(n) pass each time. Multiply nested loops: O(n log n). O(n²) assumes the outer loop is linear. O(log n) ignores the inner loop.',
-  },
-  {
-    id: 'constraint-n-1e5',
-    prompt: '`1 ≤ n ≤ 10⁵`. Your first idea is O(n²). What should you conclude?',
-    choices: [
-      'It\'s fine. Computers are fast',
-      'About 10¹⁰ operations: far too slow. Aim for O(n log n) or O(n)',
-      'Use exponential backtracking instead',
-      'Constraints don\'t matter in interviews, only correctness does',
-    ],
-    answer: 1,
-    explanation:
-      'With a budget of roughly 10⁷–10⁸ simple operations per second, 10¹⁰ is minutes, not milliseconds. n ≤ 10⁵ is the classic signal for O(n log n) (sorting, binary search, heap) or O(n) (hashing, two pointers, window). O(n²) is usually acceptable up to about n = 10³–10⁴, exponential only for n ≤ ~20. Constraints matter a lot: they\'re the interviewer telling you the intended complexity.',
-  },
-  {
-    id: 'shift-queue',
-    prompt: 'A BFS uses `queue.shift()` to dequeue and processes n nodes. What is the worst-case cost of all the dequeues together, and what\'s the usual fix?',
-    choices: [
-      'O(n): shift is O(1)',
-      'O(n²), because each shift moves the remaining elements. Use a head-index pointer (or a linked list / ring buffer)',
-      'O(n log n). Use a heap',
-      'O(n²). Use `unshift` instead',
-    ],
-    answer: 1,
-    explanation:
-      '`shift` removes index 0 and re-indexes everything after it: O(k) for a queue of size k, so n dequeues can cost O(n²). Keep an index `head` and read `items[head++]` instead, which is O(1). A heap is for *priority* order, not FIFO. `unshift` is also O(n) and adds at the wrong end. Engines sometimes optimise `shift` on small arrays, but you can\'t rely on that, and interviewers expect you to know the general cost.',
-  },
-  {
-    id: 'recursive-fib-space',
-    prompt: 'Naive recursive `fib(n)` (`fib(n - 1) + fib(n - 2)`, no memo). What are its time and space complexity?',
-    code: `function fib(n: number): number {
+    id: 'dsa2-naive-fib-complexity',
+    prompt: 'What is the time complexity of this function, and roughly how many calls does `fib(30)` make?',
+    code: `let calls = 0;
+function fib(n: number): number {
+  calls++;
   return n < 2 ? n : fib(n - 1) + fib(n - 2);
-}`,
-    codeLang: 'ts',
-    choices: ['O(n) time, O(n) space', 'O(2ⁿ) time, O(2ⁿ) space', 'O(2ⁿ) time, O(n) space', 'O(n²) time, O(1) space'],
-    answer: 2,
-    explanation:
-      'Each call branches into two, so there are about 2ⁿ calls (more precisely φⁿ ≈ 1.618ⁿ, still exponential). But **space is the maximum call-stack depth**, not the total number of calls: at most n frames are active at once, so O(n) space. With memoization (the JS core day\'s `memoize`), time drops to O(n). Confusing total calls with stack depth gives "O(2ⁿ) space".',
-  },
-  {
-    id: 'sum-equals-k-negatives',
-    prompt: '"Count subarrays whose sum equals k. The array may contain **negative** numbers." Which approach is correct and O(n)?',
-    choices: [
-      'Sliding window: expand while the sum < k, shrink while the sum > k',
-      'Prefix sums with a hash map counting how often each prefix sum has occurred',
-      'Sort, then two pointers',
-      'Binary search on prefix sums',
-    ],
-    answer: 1,
-    explanation:
-      'With negatives, adding an element can *decrease* the sum, so the sliding window can\'t decide which side to move. The window\'s validity isn\'t monotonic. Rewrite the condition instead: `prefix[j] − prefix[i] = k` ⇔ `prefix[i] = prefix[j] − k`, then count matching earlier prefixes in a map seeded with `{0: 1}`. Sorting breaks contiguity. Binary search needs sorted prefix sums, which you only get when all numbers are non-negative.',
-  },
-  {
-    id: 'cue-first-ge',
-    prompt: 'Sorted array of 10⁶ timestamps; you need the first event at or after time t, many times per second. What do you use?',
-    choices: [
-      '`events.find(e => e >= t)` each time',
-      'Binary search (lower bound): O(log n) per query',
-      'Build a Set of timestamps',
-      'Sort the array again before each query',
-    ],
-    answer: 1,
-    explanation:
-      'Sorted data plus "first position where value ≥ t" is the definition of lower-bound binary search: about 20 comparisons for 10⁶ items. `find` is O(n) per query. A Set answers "is t present?", not "what\'s the first one ≥ t". Re-sorting is O(n log n) per query and the array is already sorted. Frontend connection: finding the first visible row in a virtualised list from cumulative row offsets.',
-  },
-  {
-    id: 'cue-group-key',
-    prompt: 'You need to group words that are anagrams. Which `Map` key works?',
-    code: `const words = ['tea', 'eat', 'ate'];
-const keyA = (w: string) => [...w].sort();          // string[]
-const keyB = (w: string) => [...w].sort().join(''); // string
-const m = new Map<unknown, string[]>();
-for (const w of words) {
-  const k = keyA(w);
-  m.set(k, [...(m.get(k) ?? []), w]);
 }
-console.log(m.size);`,
+fib(30);
+console.log(calls);`,
     codeLang: 'ts',
     runnable: true,
-    choices: [
-      '`keyA`: the snippet logs 1 because the sorted arrays are equal',
-      '`keyB`: `keyA` creates a new array each time, and Map compares object keys by reference (the snippet logs 3)',
-      'Either. Map deep-compares arrays',
-      'Neither. Maps can\'t have string keys built at runtime',
-    ],
-    answer: 1,
+    choices: ['O(n) — about 30 calls', 'O(n²) — about 900 calls', 'Exponential, O(2ⁿ) — about 2.7 million calls', 'O(n log n) — about 150 calls'],
+    answer: 2,
     explanation:
-      '`Map` uses SameValueZero: primitives by value, objects **by reference**. Every call to `keyA` returns a fresh array, so each word gets its own entry (size 3). Convert the canonical form to a **string** (`join(\'\')`), or for count signatures `join(\'#\')` with a separator. The same trap applies to grid coordinates: use `` `${r},${c}` ``, not `[r, c]`.',
+      'Each call branches into two, and the subproblems overlap massively (`fib(28)` is computed twice, `fib(27)` three times…). The exact count is `2·fib(n+1) − 1` ≈ 2.69 million for n = 30 — growth of φⁿ ≈ 1.618ⁿ, usually stated as O(2ⁿ). Memoizing reduces it to n distinct states, O(n). The linear answers describe the memoized version, not this one.',
   },
   {
-    id: 'cue-monotonic-stack',
-    prompt: '"For each bar in a chart, find how many bars to its right you pass before reaching a **taller** bar." n ≤ 10⁵. Which pattern?',
-    choices: ['Two pointers from both ends', 'Monotonic stack of indices waiting for a taller bar', 'Prefix sums', 'Sliding window of fixed size'],
+    id: 'dsa2-recursion-space',
+    prompt: 'A recursive DFS visits every node of a **balanced** binary tree with n nodes. What are its time and extra space complexities?',
+    choices: ['O(n) time, O(1) space', 'O(n) time, O(log n) space', 'O(log n) time, O(log n) space', 'O(n) time, O(n) space always'],
     answer: 1,
     explanation:
-      '"Next greater element to the right" is the monotonic-stack cue. Keep indices whose answer is unknown, with heights non-increasing from bottom to top. Each new bar resolves every shorter bar on top. O(n), because each index is pushed and popped once. Brute force is O(n²), too slow for 10⁵. Two pointers and fixed windows don\'t capture "first taller to the right". Prefix sums answer range sums, not comparisons.',
+      'Every node is visited once → O(n) time. The call stack holds at most one frame per level of the current path → O(h), and a balanced tree has h ≈ log₂ n. "O(1) space" forgets the call stack. "O(n) space always" is the *worst case* for a degenerate tree (a linked list), not a balanced one — say both when asked.',
   },
   {
-    id: 'two-sum-sort-tradeoff',
-    prompt: 'Two Sum must return the **original indices**. Why is "sort, then two pointers" a worse fit than a hash map here?',
-    choices: [
-      'Two pointers doesn\'t work on sorted arrays',
-      'Sorting is O(n log n) and loses the original positions unless you sort [value, index] pairs. The hash map is O(n) and keeps indices',
-      'Hash maps use less memory than sorting',
-      'Sorting can\'t handle negative numbers',
-    ],
-    answer: 1,
-    explanation:
-      'Sorting costs O(n log n) and reorders elements, so you have to carry indices along as pairs. The one-pass hash map is O(n) average and naturally knows each index. The trade-off flips when memory matters: two pointers on an already-sorted array is O(n) time and O(1) space, while the hash map needs O(n) space. That\'s why "hash map uses less memory" is wrong. Sorting handles negatives fine with a numeric comparator.',
-  },
-  {
-    id: 'binary-search-bug',
-    prompt: 'This lower-bound search sometimes **never terminates**. Why?',
-    code: `function lowerBound(nums: number[], target: number): number {
-  let lo = 0;
-  let hi = nums.length;
-  while (lo <= hi) {
-    const mid = Math.floor((lo + hi) / 2);
-    if (nums[mid] < target) lo = mid + 1;
-    else hi = mid;
+    id: 'dsa2-bfs-order-output',
+    prompt: 'What does this BFS print?',
+    code: `const adj: Record<string, string[]> = {
+  A: ['B', 'C'],
+  B: ['D'],
+  C: ['D', 'E'],
+  D: ['F'],
+  E: [],
+  F: [],
+};
+const seen = new Set(['A']);
+const queue = ['A'];
+const order: string[] = [];
+for (let head = 0; head < queue.length; head++) {
+  const node = queue[head];
+  order.push(node);
+  for (const next of adj[node]) {
+    if (!seen.has(next)) { seen.add(next); queue.push(next); }
   }
-  return lo;
-}`,
+}
+console.log(order.join(' '));`,
     codeLang: 'ts',
+    runnable: true,
+    choices: ['A B D F C E', 'A B C D E F', 'A C E D F B', 'A B C D D E F'],
+    answer: 1,
+    explanation:
+      'BFS visits by distance from A: A (0), then B and C (1), then D and E (2), then F (3). D is reachable from both B and C, but it is marked on enqueue, so it appears once. `A B D F C E` is a DFS (pre-order) order. The version with two Ds is what happens without a visited set.',
+  },
+  {
+    id: 'dsa2-pattern-knight',
+    prompt: 'Which pattern fits: *"Return the minimum number of moves a chess knight needs to reach square (x, y) from (0, 0)"*?',
+    choices: ['Backtracking over all move sequences', 'BFS on an implicit graph of squares', 'Dynamic programming over x and y', 'Greedy: always move closer to the target'],
+    answer: 1,
+    explanation:
+      'Squares are nodes, the 8 knight moves are edges, every move costs 1, and you want the **fewest** moves → BFS. Backtracking explores every sequence (exponential) when only the shortest matters. A DP over (x, y) doesn\'t work directly because knight moves go "backwards" too, so there\'s no natural fill order. Greedy fails near the target — sometimes you have to move away to land on it.',
+  },
+  {
+    id: 'dsa2-fill-shared-array',
+    prompt: 'What does this print?',
+    code: `const adj: number[][] = new Array(3).fill([]);
+adj[0].push(1);
+console.log(JSON.stringify(adj));`,
+    codeLang: 'ts',
+    runnable: true,
+    choices: ['[[1],[],[]]', '[[1],[1],[1]]', '[[],[],[]]', 'TypeError: cannot push to a frozen array'],
+    answer: 1,
+    explanation:
+      '`fill([])` evaluates `[]` **once** and puts that same array object in every slot, so pushing to `adj[0]` shows up everywhere. Build adjacency lists with `Array.from({ length: n }, () => [])`, which calls the factory per slot.',
+  },
+  {
+    id: 'dsa2-directed-cycle-visited',
+    prompt: 'For the **directed** graph `app → ui, app → utils, ui → utils`, a DFS reports "cycle" whenever it meets an already-visited node. What happens?',
     choices: [
-      '`Math.floor` should be `Math.ceil`',
-      'With `lo <= hi` and `hi = mid`, once `lo === hi` the range never shrinks (mid === lo === hi, then hi = mid again)',
-      '`hi` should start at `nums.length - 1`',
-      'It\'s correct; binary search always terminates',
+      'Correctly reports no cycle',
+      'Falsely reports a cycle, because `utils` is reached twice',
+      'Correctly reports a cycle between app and utils',
+      'Loops forever',
     ],
     answer: 1,
     explanation:
-      'This mixes two templates. The half-open template uses `while (lo < hi)` with `hi = mid`. The closed template uses `while (lo <= hi)` with `hi = mid - 1`. Here, when `lo === hi` the loop still runs, `mid === lo`, and if `nums[mid] >= target` it sets `hi = mid`: nothing changes, forever. (It also reads `nums[nums.length]`, which is `undefined`.) `Math.ceil` doesn\'t fix the lo === hi case. Changing `hi` to `length - 1` makes "insert at the end" impossible. Pick one template and keep its three parts consistent.',
+      'This is a **diamond**, not a cycle: `utils` is reachable by two paths. A plain visited set can\'t tell "seen on another branch" from "on my current path". Directed cycle detection needs three states — unvisited, **visiting** (on the current DFS path) and done — and only a visiting node indicates a back edge. (For **undirected** graphs, the rule is "visited and not my parent".)',
+  },
+  {
+    id: 'dsa2-stairs-three-steps',
+    prompt: 'You can climb **1, 2 or 3** steps at a time. Which recurrence gives the number of ways `w(n)` to reach step n (with `w(0) = 1`, and `w` of a negative number = 0)?',
+    choices: ['`w(n) = w(n − 1) + w(n − 2)`', '`w(n) = w(n − 1) + w(n − 2) + w(n − 3)`', '`w(n) = 3 · w(n − 1)`', '`w(n) = w(n − 3) + 3`'],
+    answer: 1,
+    explanation:
+      'Ask "what was the last move?" — a 1-step from n − 1, a 2-step from n − 2, or a 3-step from n − 3. The ways are disjoint, so you add them: `w(n) = w(n−1) + w(n−2) + w(n−3)`. The two-term version is the 1-or-2 step problem. `3 · w(n − 1)` counts sequences of n moves, not ways to land exactly on step n.',
+  },
+  {
+    id: 'dsa2-permutation-complexity',
+    prompt: 'What is the time complexity of generating all permutations of n distinct items (each stored as a new array)?',
+    choices: ['O(2ⁿ)', 'O(n²)', 'O(n · n!)', 'O(n!) / n'],
+    answer: 2,
+    explanation:
+      'There are n! permutations, and copying each one into the result costs O(n), so O(n · n!). O(2ⁿ) is the number of **subsets** (n · 2ⁿ with copying). The output size alone rules out anything polynomial — no algorithm can list n! items faster than n!.',
+  },
+  {
+    id: 'dsa2-memo-vs-tab-stack',
+    prompt: 'Your top-down memoized `coinChange` works for small amounts but throws `RangeError: Maximum call stack size exceeded` for `coins = [1]`, `amount = 100000`. Best fix?',
+    choices: [
+      'Use a `Map` instead of an object for the memo',
+      'Convert it to bottom-up tabulation (a loop filling `dp[0..amount]`)',
+      'Wrap the recursive call in `try/catch` and retry',
+      'Make the function tail-recursive so the engine reuses the frame',
+    ],
+    answer: 1,
+    explanation:
+      'With coin 1, the recursion goes `best(100000) → best(99999) → …`: 100,000 frames deep, beyond JS engine limits. Tabulation computes the same states in a loop with no recursion. The memo\'s data structure doesn\'t affect depth. Catching the error doesn\'t make the answer computable. V8 does not implement tail-call optimisation (only Safari\'s engine does), and this recursion isn\'t in tail position anyway (it takes a `min` after the call).',
+  },
+  {
+    id: 'dsa2-greedy-coins',
+    prompt: 'Why is "always take the largest coin that fits" not a valid solution to minimum coin change in general?',
+    choices: [
+      'It is valid; it only fails when amount is 0',
+      'For coins [1, 3, 4] and amount 6 it returns 3 coins (4+1+1), but 2 coins (3+3) is optimal',
+      'It can\'t return −1 for impossible amounts',
+      'It is O(n²)',
+    ],
+    answer: 1,
+    explanation:
+      'A single counterexample kills a greedy algorithm, and `[1, 3, 4] → 6` is the classic one. Greedy is correct for "canonical" coin systems like real currencies, which is why it feels right. The DP considers every possible last coin, so it can\'t be fooled. (Greedy can also wrongly fail on reachable amounts — e.g. coins [3, 5], amount 9: take 5, then stuck at 4, though 3+3+3 works.)',
+  },
+  {
+    id: 'dsa2-constraints-cue',
+    prompt: 'A problem says `1 ≤ nums.length ≤ 15` and asks for "every valid arrangement". What does the constraint tell you?',
+    choices: [
+      'You must find an O(n) solution',
+      'An exponential solution such as backtracking (≈ 2¹⁵ or 15! with pruning) is intended',
+      'You need binary search',
+      'Nothing — constraints are only for input validation',
+    ],
+    answer: 1,
+    explanation:
+      'Constraints are a hint about the intended complexity. n ≤ ~20 means exponential work is acceptable (2²⁰ ≈ 1 million), and "every valid arrangement" asks for an exponential-sized output anyway → backtracking with pruning. n up to 10⁵ would point at O(n) or O(n log n); n ≤ 10⁴ often allows O(n²) or a 2-D DP.',
   },
 ];

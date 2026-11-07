@@ -4,17 +4,18 @@ import body from './lab.md?raw';
 const lab: LabBlock = {
   kind: 'lab',
   track: 'agentic',
-  id: 'agentic-socratic-dsa-coach',
-  title: 'Claude Code as a Socratic DS&A coach',
+  id: 'agentic-stress-testing',
+  title: 'Claude Code: stress-test your solutions with a brute force and random inputs',
   minutes: 35,
   body,
   checklist: [
-    'src/dsa/productExceptSelf.ts stub created, plus a CLAUDE.md rule forbidding solution code in src/dsa/',
-    '.claude/commands/hint.md takes a file and a level 1–4 ($1/$2) and gives exactly one hint, never TypeScript',
-    '.claude/commands/complexity.md asks you to state and justify time/space complexity before it grades you',
-    'productExceptSelf implemented by you, without AI, in O(n) time with no division',
-    'Claude-written edge-case tests (zeros, negatives, empty, single element, large n) pass against your code, with the implementation untouched by Claude',
-    'Commands committed; reflection written in notes/dsa-1.md',
+    'CLAUDE.md says Claude must not edit or suggest code for your solutions in src/drills/dsa/',
+    'coinChange.ts written by you, without AI',
+    'Claude-written brute force (no caching or tricks) and a seeded PRNG in src/test/random.ts, reviewed in plan mode before approval',
+    'A differential Vitest test runs 500 seeded cases and reports the smallest failing input with its seed',
+    'Planted a bug, debugged it yourself from the minimal counterexample, and kept that input as a regression test',
+    'Read a fast-check version of the test and can explain shrinking and invariant-style properties',
+    'Reflection written in notes/dsa-stress.md',
   ],
 };
 

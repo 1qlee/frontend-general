@@ -38,7 +38,7 @@ function editorTheme(dark: boolean) {
       '.cm-content': { caretColor: 'var(--accent)' },
       '.cm-cursor, .cm-dropCursor': { borderLeftColor: 'var(--accent)' },
       '.cm-gutters': { backgroundColor: 'var(--code-bg)', color: 'var(--text-faint)', borderRight: '1px solid var(--border)' },
-      '.cm-activeLine': { backgroundColor: 'color-mix(in srgb, var(--accent) 6%, transparent)' },
+      '.cm-activeLine': { backgroundColor: 'color-mix(in srgb, var(--accent) 3%, transparent)' },
       '.cm-activeLineGutter': { backgroundColor: 'color-mix(in srgb, var(--accent) 10%, transparent)', color: 'var(--text)' },
       '&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection': {
         backgroundColor: 'color-mix(in srgb, var(--accent) 28%, transparent)',
